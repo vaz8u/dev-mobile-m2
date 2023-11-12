@@ -10,7 +10,12 @@
     "test": "jest --watchAll"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "testPathIgnorePatterns": [
+      "components/Themed.tsx"
+    ],
+    "collectCoverage": true,
+    "coverageReporters": ["lcov", "text"]
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
@@ -35,6 +40,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react-native": "^12.3.2",
     "@types/jest": "^29.5.8",
     "@types/react": "^18.2.37",
