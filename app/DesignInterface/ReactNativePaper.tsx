@@ -18,7 +18,6 @@ class ReactNativePaper implements DesignInterface {
       <PaperCard>
         <PaperCard.Title title={title} />
         <PaperCard.Content>
-          <Title>{title}</Title>
           <Paragraph>{content}</Paragraph>
         </PaperCard.Content>
       </PaperCard>
