@@ -2,8 +2,6 @@ import { StyleSheet } from 'react-native';
 
 import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View } from '../../components/Themed';
-import Mp3FilePicker from '../../components/Mp3FilePicker';
-import AlarmForm from '../../components/AlarmForm';
 
 export default function TabOneScreen() {
   return (

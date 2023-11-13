@@ -4,7 +4,7 @@ import * as DocumentPicker from 'expo-document-picker';
 
 
 const Mp3FilePicker = () => {
-  const [selectedFile, setFileResponse] = useState<any>();
+  const [selectedFile, setSelectedFile] = useState<any>();
   
   const pickFile = async () => {
     try {

@@ -5,8 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 const AlarmForm = () => {
   const {
     control,
-    handleSubmit,
-    formState: { errors },
+    handleSubmit
   } = useForm();
 
   const [jsonFile, setJsonFile] = useState(null);
