@@ -2,16 +2,11 @@ import { StyleSheet } from 'react-native';
 
 import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View } from '../../components/Themed';
-import Mp3FilePicker from '../../components/Mp3FilePicker';
 import AlarmForm from '../../components/AlarmForm';
 
-export default function TabOneScreen() {
+export default function TabTwoScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
+    <AlarmForm></AlarmForm>
   );
 }
 
