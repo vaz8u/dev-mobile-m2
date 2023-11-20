@@ -1,7 +1,5 @@
 // tempsTrajet.ts
 
-import { getKeyFromKeyVault } from './azure';
-
 /* Fonction qui permet de convertir une adresse en coordonnées GPS
   * @param nrue : Numéro de rue
   * @param rue : Nom de rue
@@ -11,7 +9,7 @@ import { getKeyFromKeyVault } from './azure';
 export async function adresseToCoords(nrue: string, rue: string, ville: string) {  
     // Création de l'adresse complète
     const adresse = `${nrue} ${rue},${ville},France`;
-    const apiKey = getKeyFromKeyVault('ApiKeyTrajet');
+    const apiKey = null;
   
     try {
       // Requête API
@@ -97,7 +95,7 @@ export async function apiTrajet(depart: any, arrivee: any) {
       method: 'GET',
     };
 
-    const apiKey = getKeyFromKeyVault('ApiKeyTrajet');
+    const apiKey = null;
 
     // Paramètres de la requête
     const mode = 'drive';
