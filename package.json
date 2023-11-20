@@ -13,9 +13,13 @@
         "preset": "jest-expo"
     },
     "dependencies": {
+        "@azure/identity": "^4.0.0",
+        "@azure/keyvault-secrets": "^4.7.0",
+        "@azure/msal-node": "^2.5.1",
         "@expo/vector-icons": "^13.0.0",
         "@react-navigation/native": "^6.0.2",
         "expo": "~49.0.15",
+        "expo-document-picker": "^11.7.0",
         "expo-font": "~11.4.0",
         "expo-linking": "~5.0.2",
         "expo-router": "^2.0.0",
@@ -23,6 +27,7 @@
         "expo-status-bar": "~1.6.0",
         "expo-system-ui": "~2.4.0",
         "expo-web-browser": "~12.3.2",
+        "jest-fetch-mock": "^3.0.3",
         "react": "18.2.0",
         "react-dom": "18.2.0",
         "react-hook-form": "^7.48.2",
