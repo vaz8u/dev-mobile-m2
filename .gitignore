@@ -172,3 +172,5 @@ __snapshots__/
 expo-env.d.ts
 .expo/
 # @end expo-cli
+
+yarn.lock

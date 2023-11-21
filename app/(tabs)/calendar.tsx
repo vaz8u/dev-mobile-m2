@@ -1,9 +1,9 @@
-import { StyleSheet } from 'react-native';
-import AlarmForm from '../../components/AlarmForm';
+import { StyleSheet, View, Text } from 'react-native';
+import InteractiveCalendar from '../../components/InteractiveCalendar';
 
-export default function TabTwoScreen() {
+export default function CalendarScreen() {
   return (
-    <AlarmForm></AlarmForm>
+    <InteractiveCalendar></InteractiveCalendar>
   );
 }
 
