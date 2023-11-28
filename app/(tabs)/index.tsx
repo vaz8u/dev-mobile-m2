@@ -1,13 +1,15 @@
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View } from '../../components/Themed';
-
+import { Button } from 'react-native-paper';
+import { Link, useRouter } from 'expo-router';
+import { FontAwesome } from '@expo/vector-icons';
 export default function TabOneScreen() {
+  const navigation = useRouter();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+      <Button icon="plus" mode="elevated" onPress={() => navigation.push('/(tabs)/createAlarms')}>
+      </Button>
     </View>
   );
 }
