@@ -10,7 +10,8 @@ import InputTimePicker from './InputTimePicker';
 
 const ClassicAlarmForm = () => {
   const navigation = useRouter();
-  
+  const [isSwitchToggled, setIsSwitchToggled] = useState(false);
+
   const handleCancelButtonPress = () => {
     navigation.push("/");
   };
@@ -32,6 +33,10 @@ const ClassicAlarmForm = () => {
     
   };
 
+  const handleToggleSwitch = () => {
+    setIsSwitchToggled(!isSwitchToggled);
+  };
+
   return (
     <View style={[styles.scene]}>
     <Controller control={control} rules={{required: true}}
@@ -44,7 +49,7 @@ const ClassicAlarmForm = () => {
           name="Name"/>
     <Controller control={control} rules={{required: true}}
       render={({ field: { onChange, onBlur, value } }) => (
-        <InputTimePicker label={"Déclenchement :"} optional={false} control={control} name={'TimeTriggered'}></InputTimePicker>
+        <InputTimePicker label={"Déclenchement :"} optional={false} control={control} name={'TimeTriggered'} toggled={false} onToggleSwitch={() => handleToggleSwitch}></InputTimePicker>
       )}
     name="TimeTriggered"/>
     {errors.TimeTriggered && <Text style={[styles.text]}>This is required.</Text>}

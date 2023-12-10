@@ -11,13 +11,14 @@ interface Time {
 
 interface InputTimePickerProps {
   label: string;
+  optional: boolean;
   control: Control<any,object>;
   name: string;
   toggled: boolean;
   onToggleSwitch:any;
 }
 
-const InputTimePicker = ({ label, control, name, toggled, onToggleSwitch }: InputTimePickerProps) => {
+const InputTimePicker = ({ label, optional, control, name, toggled, onToggleSwitch }: InputTimePickerProps) => {
   const { setValue, getValues } = useForm();
   const [visible, setVisible] = React.useState(false);
 
@@ -67,7 +68,7 @@ const InputTimePicker = ({ label, control, name, toggled, onToggleSwitch }: Inpu
           );
         }}
       />
-      <Switch value={toggled} onValueChange={onToggleTime} />
+      {optional && <Switch value={toggled} onValueChange={onToggleTime} />}
     </View>
   );
 };

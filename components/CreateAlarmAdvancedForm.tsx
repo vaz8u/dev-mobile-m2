@@ -60,7 +60,7 @@ const AdvancedAlarmForm = () => {
         name="Departure"/>
         {errors.Departure && <Text style={[styles.text]}>This is required.</Text>}
        
-          <InputTimePicker name="DepartureTime" label={"Heure de départ :"} control={control} toggled={isFirstSwitchToggled} onToggleSwitch={() => handleToggleSwitch(1)}></InputTimePicker>
+          <InputTimePicker name="DepartureTime" label={"Heure de départ :"} optional={true} control={control} toggled={isFirstSwitchToggled} onToggleSwitch={() => handleToggleSwitch(1)}></InputTimePicker>
         
           <Controller control={control} rules={{required: true}}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -69,7 +69,7 @@ const AdvancedAlarmForm = () => {
           )}
           name="Arrival"/>
         {errors.Arrival && <Text style={[styles.text]}>This is required.</Text>}
-        <InputTimePicker name="ArrivalTime" label={"Heure d'arrivée :"} control={control} toggled={isSecondSwitchToggled} onToggleSwitch={() => handleToggleSwitch(2)}></InputTimePicker>
+        <InputTimePicker name="ArrivalTime" label={"Heure d'arrivée :"} optional={true} control={control} toggled={isSecondSwitchToggled} onToggleSwitch={() => handleToggleSwitch(2)}></InputTimePicker>
           <ToggleParameter paramTitle="Son de l'alarme"></ToggleParameter>
           <ToggleParameter paramTitle="Vibreur"></ToggleParameter>
           <View style= {styles.row}>
