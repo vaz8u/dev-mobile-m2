@@ -4,12 +4,21 @@ import { UpdateAccountInput } from './dto/update-account.input';
 import { Account } from './entities/account.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AccountsService {
-    constructor(@InjectRepository(Account) private accountsRepository: Repository<Account>) { }
+    constructor(@InjectRepository(Account) private accountsRepository: Repository<Account>) {
 
-    create(createAccountInput: CreateAccountInput): Promise<Account> {
+        this.create({
+            username: 'admin',
+            password: 'admin'
+        })
+    }
+
+    async create(createAccountInput: CreateAccountInput): Promise<Account> {
+        createAccountInput.password = await bcrypt.hash(createAccountInput.password, 10);
+
         const newAccount = this.accountsRepository.create(createAccountInput);
 
         return this.accountsRepository.save(newAccount);

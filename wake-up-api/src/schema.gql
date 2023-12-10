@@ -3,21 +3,25 @@
 # ------------------------------------------------------
 
 type Account {
-  """Id of an account (generated)"""
-  id: Int!
   username: String!
   password: String!
 }
 
+type LoginResponse {
+  access_token: String!
+  account: Account!
+}
+
 type Query {
   accounts: [Account!]!
-  account(id: Int!): Account!
+  account(username: String!): Account!
 }
 
 type Mutation {
   createAccount(createAccountInput: CreateAccountInput!): Account!
   updateAccount(updateAccountInput: UpdateAccountInput!): Account!
-  removeAccount(id: Int!): Boolean!
+  removeAccount(username: String!): Boolean!
+  login(loginAccountInput: LoginAccountInput!): LoginResponse!
 }
 
 input CreateAccountInput {
@@ -28,7 +32,9 @@ input CreateAccountInput {
 input UpdateAccountInput {
   username: String
   password: String
+}
 
-  """Id of an account (generated)"""
-  id: Int!
+input LoginAccountInput {
+  username: String!
+  password: String!
 }
