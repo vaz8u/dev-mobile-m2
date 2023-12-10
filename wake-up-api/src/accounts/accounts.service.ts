@@ -19,23 +19,23 @@ export class AccountsService {
         return await this.accountsRepository.find();
     }
 
-    async findOne(id: number): Promise<Account> {
-        return this.accountsRepository.findOneOrFail({
+    async findOne(username: string): Promise<Account> {
+        return this.accountsRepository.findOne({
             where: {
-                id: id
+                username: username
             }
         });
     }
 
-    async update(id: number, updateAccountInput: UpdateAccountInput): Promise<Account | null> {
-        const updateResult = await this.accountsRepository.update(id, updateAccountInput);
-        if (updateResult.raw === 0) {
+    async update(username: string, updateAccountInput: UpdateAccountInput): Promise<Account> {
+        const updateResult = await this.accountsRepository.update(username, updateAccountInput);
+        if (updateResult.affected === 0) {
             return null;
         }
-        return this.findOne(id);
+        return this.findOne(username);
     }
 
-    async remove(id: number): Promise<boolean> {
-        return (await this.accountsRepository.delete(id)).raw !== 0;
+    async remove(username: string): Promise<boolean> {
+        return (await this.accountsRepository.delete(username)).affected !== 0;
     }
 }
