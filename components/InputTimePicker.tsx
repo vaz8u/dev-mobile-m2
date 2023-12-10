@@ -1,46 +1,73 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
-import { List, Switch, TextInput, Button } from 'react-native-paper';
+import { Switch } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
+import { useForm, Control, Controller, FieldValues } from 'react-hook-form';
+
+interface Time {
+  hours: number;
+  minutes: number;
+}
 
 interface InputTimePickerProps {
-    label:string;
+  label: string;
+  control: Control<any,object>;
+  name: string;
+  toggled: boolean;
+  onToggleSwitch:any;
 }
-const InputTimePicker = ({label}:InputTimePickerProps) => {
-  const [isDepartureTimeOn, setIsTimeOn] = React.useState(false);
+
+const InputTimePicker = ({ label, control, name, toggled, onToggleSwitch }: InputTimePickerProps) => {
+  const { setValue, getValues } = useForm();
   const [visible, setVisible] = React.useState(false);
-  const [time, setTime] = React.useState<Time>();
+
   const onDismiss = React.useCallback(() => {
-    setVisible(false)
-  }, [setVisible])
+    setVisible(false);
+  }, [setVisible]);
 
   const onConfirm = React.useCallback(
-    ({ hours, minutes }: {hours:number, minutes:number}) => {
-      setVisible(false);
-      setTime({hours,minutes});
+    ({ hours, minutes }: { hours: number; minutes: number }) => {
       console.log({ hours, minutes });
+  
+      setValue(name, { hours: hours, minutes: minutes });
+
+      console.log(getValues());
+      
+      // This should log the updated values after setValue has completed
+  
+      setVisible(false);
     },
-    [setVisible]
+    [setVisible, control]
   );
+
   const onToggleTime = () => {
-    setIsTimeOn(!isDepartureTimeOn);
-  }
+    onToggleSwitch();
+  };
+
   return (
     <View style={styles.inputContainer}>
-        <Text onPress={() => setVisible(true)}>{label}</Text>
-        {
-            time ? <Text>{time.hours}:{time.minutes}</Text> :
-            <Text>__:__</Text>
-        }
-        <TimePickerModal
-            visible={visible}
-            onDismiss={onDismiss}
-            onConfirm={onConfirm}
-            hours={12}
-            minutes={14}
-        />
-        <Switch value={isDepartureTimeOn} onValueChange={onToggleTime}/>
+      <Text>{label}</Text>
+      <Controller
+        control={control}
+        name={name}
+        defaultValue={{hours:12,minutes:15}}// Set the default value with type annotation
+        render={({ field }) => {
+          console.log('Initial field value:', field.value);
+          return (
+            <>
+              <Text onPress={() => setVisible(true)}>
+                {field.value && typeof field.value === 'object'
+                  ? `${field.value.hours}:${field.value.minutes}`
+                  : field.value === null
+                  ? '__:__'
+                  : 'Invalid Value'}
+              </Text>
+              <TimePickerModal visible={visible} onDismiss={onDismiss} onConfirm={onConfirm} hours={12} minutes={14} />
+            </>
+          );
+        }}
+      />
+      <Switch value={toggled} onValueChange={onToggleTime} />
     </View>
   );
 };
@@ -48,23 +75,13 @@ const InputTimePicker = ({label}:InputTimePickerProps) => {
 export default InputTimePicker;
 
 const styles = StyleSheet.create({
-    scene: {
-        flex: 1,
-        backgroundColor:'white',
-        padding:10
-      },
-    row: {
-        display:'flex',
-        flexDirection:'row',
-        justifyContent:'space-evenly'
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    textField: {
-        flex: 1, // Allow TextInput to take up remaining space
-        marginRight: 8, // Add some space between TextInput and Button
-        marginTop: 8,
-      }
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
 });
+function watch(): any {
+  throw new Error('Function not implemented.');
+}
+

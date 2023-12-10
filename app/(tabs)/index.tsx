@@ -1,9 +1,7 @@
-import { Pressable, StyleSheet } from 'react-native';
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
+import { StyleSheet } from 'react-native';
+import { View } from '../../components/Themed';
 import { Button } from 'react-native-paper';
-import { Link, useRouter } from 'expo-router';
-import { FontAwesome } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 export default function TabOneScreen() {
   const navigation = useRouter();
   return (

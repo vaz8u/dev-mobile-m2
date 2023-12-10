@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import InteractiveCalendar from '../../components/InteractiveCalendar';
 
 export default function CalendarScreen() {

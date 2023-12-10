@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
-import { List, Switch, TextInput, Button } from 'react-native-paper';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { TextInput, Button } from 'react-native-paper';
 import { Noop } from 'react-hook-form';
 
 interface InputLocationProps {

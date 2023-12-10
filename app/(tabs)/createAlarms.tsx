@@ -1,5 +1,4 @@
-import { Pressable, StyleSheet } from 'react-native';
-import { Text, View } from '../../components/Themed';
+import { StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { TabBar, TabView } from 'react-native-tab-view';
 import AdvancedAlarmForm from '../../components/CreateAlarmAdvancedForm';
@@ -11,7 +10,7 @@ interface Route {
 }
 
 const initialLayout = { width: 300 };
-export default function createAlarmsScreen() {
+export default function CreateAlarmsScreen() {
     const [index, setIndex] = useState(0);
     const [routes] = useState([
       { key: 'advanced', title: 'Avancé' },
