@@ -1,16 +1,16 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { View, Text } from 'react-native';
-import { Pressable, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import InputTimePicker from './InputTimePicker';
 
-
 const ClassicAlarmForm = () => {
   const navigation = useRouter();
   const [isSwitchToggled, setIsSwitchToggled] = useState(false);
+  const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
+  const [isVibratorActivated, setIsVibratorActivated] = useState(false);
 
   const handleCancelButtonPress = () => {
     navigation.push("/");
@@ -31,10 +31,20 @@ const ClassicAlarmForm = () => {
     console.log("Affichage des données:");
     console.log("Nom de l'alarme: ", data.Name);
     console.log("Alarme à : ", data.TimeTriggered.hours, "h", data.TimeTriggered.minutes);
+    console.log("Son de l'alarme: ",isAlarmSoundActivated);
+    console.log("Vibreur: ", isVibratorActivated);
   };
 
   const handleToggleSwitch = () => {
     setIsSwitchToggled(!isSwitchToggled);
+  };
+
+  const handleToggleParameter = (paramTitle: string) => {
+    if (paramTitle === 'Son de l\'alarme') {
+      setIsAlarmSoundActivated(!isAlarmSoundActivated);
+    } else if (paramTitle === 'Vibreur') {
+      setIsVibratorActivated(!isVibratorActivated);
+    }
   };
 
   return (
@@ -53,8 +63,8 @@ const ClassicAlarmForm = () => {
       )}
     name="TimeTriggered"/>
     {errors.TimeTriggered && <Text style={[styles.text]}>This is required.</Text>}
-    <ToggleParameter paramTitle="Son de l'alarme"></ToggleParameter>
-    <ToggleParameter paramTitle="Vibreur"></ToggleParameter>
+    <ToggleParameter paramTitle="Son de l'alarme" isParamActivated={isAlarmSoundActivated} onToggle={handleToggleParameter}></ToggleParameter>
+    <ToggleParameter paramTitle="Vibreur" isParamActivated={isVibratorActivated} onToggle={handleToggleParameter}></ToggleParameter>
     <View style= {styles.row}>
         <Button mode="contained" onPress={handleCancelButtonPress} disabled={false}>
             Annuler

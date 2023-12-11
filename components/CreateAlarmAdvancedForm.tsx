@@ -11,7 +11,9 @@ const AdvancedAlarmForm = () => {
   const navigation = useRouter();
   const [isFirstSwitchToggled, setIsFirstSwitchToggled] = useState(false);
   const [isSecondSwitchToggled, setIsSecondSwitchToggled] = useState(false);
-  
+  const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
+  const [isVibratorActivated, setIsVibratorActivated] = useState(false);
+
   const handleCancelButtonPress = () => {
     navigation.push("/");
   };
@@ -22,6 +24,13 @@ const AdvancedAlarmForm = () => {
     } else if (pickerNumber === 2) {
       setIsFirstSwitchToggled(false);
       setIsSecondSwitchToggled(!isSecondSwitchToggled);
+    }
+  };
+  const handleToggleParameter = (paramTitle: string) => {
+    if (paramTitle === 'Son de l\'alarme') {
+      setIsAlarmSoundActivated(!isAlarmSoundActivated);
+    } else if (paramTitle === 'Vibreur') {
+      setIsVibratorActivated(!isVibratorActivated);
     }
   };
   const { control, setValue, handleSubmit, formState: { errors }} = useForm({
@@ -43,6 +52,8 @@ const AdvancedAlarmForm = () => {
       console.log("Départ à ", data.DepartureTime.hours,"h",data.DepartureTime.minutes);
     if(isSecondSwitchToggled)
       console.log("Arrivée à ", data.ArrivalTime.hours,"h",data.ArrivalTime.minutes);
+    console.log("Son de l'alarme: ",isAlarmSoundActivated);
+    console.log("Vibreur: ", isVibratorActivated);
   };
   return (
       <View style={[styles.scene]}>
@@ -73,8 +84,8 @@ const AdvancedAlarmForm = () => {
           name="Arrival"/>
         {errors.Arrival && <Text style={[styles.text]}>This is required.</Text>}
         <InputTimePicker name="ArrivalTime" label={"Heure d'arrivée :"} optional={true} control={control} setValue={setValue} toggled={isSecondSwitchToggled} onToggleSwitch={() => handleToggleSwitch(2)}></InputTimePicker>
-          <ToggleParameter paramTitle="Son de l'alarme"></ToggleParameter>
-          <ToggleParameter paramTitle="Vibreur"></ToggleParameter>
+          <ToggleParameter paramTitle="Son de l'alarme" isParamActivated={isAlarmSoundActivated} onToggle={handleToggleParameter}></ToggleParameter>
+          <ToggleParameter paramTitle="Vibreur" isParamActivated={isVibratorActivated} onToggle={handleToggleParameter}></ToggleParameter>
           <View style= {styles.row}>
               <Button mode="contained" onPress={handleCancelButtonPress} disabled={false}>
                   Annuler

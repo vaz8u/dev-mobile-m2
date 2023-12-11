@@ -1,26 +1,24 @@
-import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
+import React from 'react';
+import { View } from 'react-native';
 import { List, Switch } from 'react-native-paper';
 
 interface ParamProps {
-    paramTitle:string;
+  paramTitle: string;
+  isParamActivated: boolean;
+  onToggle: (paramTitle: string) => void; // Callback function for toggling the parameter
 }
-const ToggleParameter = ({paramTitle}:ParamProps) => {
-  const [selectedFile, setSelectedFile] = useState<any>();
-  const [isParameterOn, setIsParameterOn] = React.useState(false);
-  const description = isParameterOn ? 'Activé' : 'Désactivé';
 
-  const onToggleAlarmSound = () => {
-    setIsParameterOn(!isParameterOn);
-  };
+const ToggleParameter = ({ paramTitle, isParamActivated, onToggle }: ParamProps) => {
+  const description = isParamActivated ? 'Activé' : 'Désactivé';
+
   return (
     <View>
       <List.Item
         title={paramTitle}
         description={description}
-        right={() => ( <Switch value={isParameterOn} onValueChange={onToggleAlarmSound} />)}
-        onPress={() => {}}/>
+        right={() => <Switch value={isParamActivated} onValueChange={() => onToggle(paramTitle)} />}
+        onPress={() => {}}
+      />
     </View>
   );
 };

@@ -4,11 +4,6 @@ import { Switch } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
 import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 
-interface Time {
-  hours: number;
-  minutes: number;
-}
-
 interface InputTimePickerProps {
   label: string;
   optional: boolean;
@@ -59,7 +54,6 @@ const InputTimePicker = ({ label, optional, control, name, toggled, onToggleSwit
         control={control}
         name={name}
         render={({ field }) => {
-          console.log('Initial field value:', field.value);
           return (
             <>
               <Text onPress={() => setVisible(true)}>
