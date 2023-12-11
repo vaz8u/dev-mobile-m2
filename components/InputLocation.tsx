@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { Noop } from 'react-hook-form';
+import GeolocationService from '../services/GeolocationService';
 
 interface InputLocationProps {
     label:string;
@@ -10,13 +11,26 @@ interface InputLocationProps {
     onBlur: Noop;
     value:string;
 }
-const InputLocation = ({label, placeholder, onChange, onBlur, value}:InputLocationProps) => {  
+const InputLocation = ({label, placeholder, onChange, onBlur, value}:InputLocationProps) => { 
+  const { getLocation } = GeolocationService();
+
+  const getCurrentLocation = () => {
+    console.log("Getting location...");
+    getLocation()
+      .then((location) => {
+        console.log("Current location:", location);
+      })
+      .catch((error) => {
+        console.error("Error getting location:", error);
+      });
+  };
+
   return (
     <View style={styles.inputContainer}>
         <TextInput label={label} value={value} mode="outlined" style={styles.textField}
         placeholder={placeholder} right={<TextInput.Icon icon="close" />}
         onChangeText={onChange} onBlur={onBlur} />
-        <Button mode="contained" disabled={false} icon="map-marker">
+        <Button mode="contained" disabled={false} icon="map-marker" onPress={getCurrentLocation} children={undefined}>
         </Button>
     </View>
   );
