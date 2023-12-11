@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Switch } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
-import { useForm, Control, Controller, FieldValues } from 'react-hook-form';
+import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 
 interface Time {
   hours: number;
@@ -13,13 +13,27 @@ interface InputTimePickerProps {
   label: string;
   optional: boolean;
   control: Control<any,object>;
-  name: string;
+  name: keyof {
+    Name: string;
+    Departure: string;
+    Arrival: string;
+    DepartureTime: { hours: number; minutes: number };
+    ArrivalTime: { hours: number; minutes: number };
+    TimeTriggered: string;
+  };
   toggled: boolean;
   onToggleSwitch:any;
+  setValue: UseFormSetValue<{
+    Name: string;
+    Departure: string;
+    Arrival: string;
+    DepartureTime: { hours: number; minutes: number };
+    ArrivalTime: { hours: number; minutes: number };
+    TimeTriggered: { hours: number; minutes: number };
+  }>;
 }
 
-const InputTimePicker = ({ label, optional, control, name, toggled, onToggleSwitch }: InputTimePickerProps) => {
-  const { setValue, getValues } = useForm();
+const InputTimePicker = ({ label, optional, control, name, toggled, onToggleSwitch, setValue }: InputTimePickerProps) => {
   const [visible, setVisible] = React.useState(false);
 
   const onDismiss = React.useCallback(() => {
@@ -28,14 +42,7 @@ const InputTimePicker = ({ label, optional, control, name, toggled, onToggleSwit
 
   const onConfirm = React.useCallback(
     ({ hours, minutes }: { hours: number; minutes: number }) => {
-      console.log({ hours, minutes });
-  
       setValue(name, { hours: hours, minutes: minutes });
-
-      console.log(getValues());
-      
-      // This should log the updated values after setValue has completed
-  
       setVisible(false);
     },
     [setVisible, control]
@@ -51,7 +58,6 @@ const InputTimePicker = ({ label, optional, control, name, toggled, onToggleSwit
       <Controller
         control={control}
         name={name}
-        defaultValue={{hours:12,minutes:15}}// Set the default value with type annotation
         render={({ field }) => {
           console.log('Initial field value:', field.value);
           return (
@@ -63,7 +69,7 @@ const InputTimePicker = ({ label, optional, control, name, toggled, onToggleSwit
                   ? '__:__'
                   : 'Invalid Value'}
               </Text>
-              <TimePickerModal visible={visible} onDismiss={onDismiss} onConfirm={onConfirm} hours={12} minutes={14} />
+              <TimePickerModal visible={visible} onDismiss={onDismiss} onConfirm={onConfirm} />
             </>
           );
         }}
@@ -82,7 +88,4 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
 });
-function watch(): any {
-  throw new Error('Function not implemented.');
-}
 

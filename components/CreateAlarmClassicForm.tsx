@@ -16,21 +16,21 @@ const ClassicAlarmForm = () => {
     navigation.push("/");
   };
   
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { control, setValue, handleSubmit, formState: { errors }} = useForm({
     defaultValues: {
       Name: "",
-      TimeTriggered: null
+      Departure: "",
+      Arrival: "",
+      DepartureTime: { hours:12, minutes:0 },
+      ArrivalTime: {hours:12, minutes:0 },
+      TimeTriggered: {hours:12, minutes:0}
     },
   });
   
   const onSubmit = (data: any) => {
-    console.log("oui");
-    console.log(data);
-    
+    console.log("Affichage des données:");
+    console.log("Nom de l'alarme: ", data.Name);
+    console.log("Alarme à : ", data.TimeTriggered.hours, "h", data.TimeTriggered.minutes);
   };
 
   const handleToggleSwitch = () => {
@@ -49,7 +49,7 @@ const ClassicAlarmForm = () => {
           name="Name"/>
     <Controller control={control} rules={{required: true}}
       render={({ field: { onChange, onBlur, value } }) => (
-        <InputTimePicker label={"Déclenchement :"} optional={false} control={control} name={'TimeTriggered'} toggled={false} onToggleSwitch={() => handleToggleSwitch}></InputTimePicker>
+        <InputTimePicker label={"Déclenchement :"} optional={false} control={control} setValue={setValue} name={'TimeTriggered'} toggled={false} onToggleSwitch={() => handleToggleSwitch}></InputTimePicker>
       )}
     name="TimeTriggered"/>
     {errors.TimeTriggered && <Text style={[styles.text]}>This is required.</Text>}

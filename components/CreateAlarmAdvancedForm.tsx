@@ -24,23 +24,26 @@ const AdvancedAlarmForm = () => {
       setIsSecondSwitchToggled(!isSecondSwitchToggled);
     }
   };
-  const { control, handleSubmit, formState: { errors }} = useForm({
+  const { control, setValue, handleSubmit, formState: { errors }} = useForm({
     defaultValues: {
       Name: "",
       Departure: "",
       Arrival: "",
-      DepartureTime: { hours:12, minutes:12 },
-      ArrivalTime: {hours:12, minutes:12 }
+      DepartureTime: { hours:12, minutes:0 },
+      ArrivalTime: {hours:12, minutes:0 },
+      TimeTriggered: {hours:12, minutes:0}
     },
   });
   const onSubmit = (data: any) => {
-    console.log("oui");
-    console.log(data);
+    console.log("Affichage des données:");
+    console.log("Nom de l'alarme: ", data.Name);
+    console.log("Départ de : ", data.Departure);
+    console.log("Arrivée à : ", data.Arrival);
+    if(isFirstSwitchToggled)
+      console.log("Départ à ", data.DepartureTime.hours,"h",data.DepartureTime.minutes);
+    if(isSecondSwitchToggled)
+      console.log("Arrivée à ", data.ArrivalTime.hours,"h",data.ArrivalTime.minutes);
   };
-  function setValue(name: string, value: any, options?: any): void {
-    throw new Error('Function not implemented.');
-  }
-
   return (
       <View style={[styles.scene]}>
           <Controller control={control} rules={{required: true}}
@@ -60,7 +63,7 @@ const AdvancedAlarmForm = () => {
         name="Departure"/>
         {errors.Departure && <Text style={[styles.text]}>This is required.</Text>}
        
-          <InputTimePicker name="DepartureTime" label={"Heure de départ :"} optional={true} control={control} toggled={isFirstSwitchToggled} onToggleSwitch={() => handleToggleSwitch(1)}></InputTimePicker>
+          <InputTimePicker name="DepartureTime" label={"Heure de départ :"} optional={true} control={control} setValue={setValue} toggled={isFirstSwitchToggled} onToggleSwitch={() => handleToggleSwitch(1)}></InputTimePicker>
         
           <Controller control={control} rules={{required: true}}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -69,7 +72,7 @@ const AdvancedAlarmForm = () => {
           )}
           name="Arrival"/>
         {errors.Arrival && <Text style={[styles.text]}>This is required.</Text>}
-        <InputTimePicker name="ArrivalTime" label={"Heure d'arrivée :"} optional={true} control={control} toggled={isSecondSwitchToggled} onToggleSwitch={() => handleToggleSwitch(2)}></InputTimePicker>
+        <InputTimePicker name="ArrivalTime" label={"Heure d'arrivée :"} optional={true} control={control} setValue={setValue} toggled={isSecondSwitchToggled} onToggleSwitch={() => handleToggleSwitch(2)}></InputTimePicker>
           <ToggleParameter paramTitle="Son de l'alarme"></ToggleParameter>
           <ToggleParameter paramTitle="Vibreur"></ToggleParameter>
           <View style= {styles.row}>
