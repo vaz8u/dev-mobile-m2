@@ -14,6 +14,8 @@
     },
     "dependencies": {
         "@expo/vector-icons": "^13.0.0",
+        "@nestjs/common": "^10.2.10",
+        "@nestjs/core": "^10.2.10",
         "@nestjs/testing": "^10.2.10",
         "@react-navigation/native": "^6.0.2",
         "expo": "~49.0.15",
