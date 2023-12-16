@@ -2,11 +2,16 @@ import { StyleSheet } from 'react-native';
 import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View } from '../../components/Themed';
 import AlarmListScreen from './alarmList';
-
+import { View } from '../../components/Themed';
+import { Button } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 export default function TabOneScreen() {
+  const navigation = useRouter();
   return (
     <View style={styles.container}>
       <AlarmListScreen></AlarmListScreen>
+      <Button icon="plus" mode="elevated" onPress={() => navigation.push('/(tabs)/createAlarms')}>
+      </Button>
     </View>
   );
 }

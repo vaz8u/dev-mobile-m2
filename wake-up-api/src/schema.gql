@@ -1,0 +1,40 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Account {
+  username: String!
+  password: String!
+}
+
+type LoginResponse {
+  access_token: String!
+  account: Account!
+}
+
+type Query {
+  accounts: [Account!]!
+  account(username: String!): Account!
+}
+
+type Mutation {
+  createAccount(createAccountInput: CreateAccountInput!): Account!
+  updateAccount(updateAccountInput: UpdateAccountInput!): Account!
+  removeAccount(username: String!): Boolean!
+  login(loginAccountInput: LoginAccountInput!): LoginResponse!
+}
+
+input CreateAccountInput {
+  username: String!
+  password: String!
+}
+
+input UpdateAccountInput {
+  username: String
+  password: String
+}
+
+input LoginAccountInput {
+  username: String!
+  password: String!
+}
