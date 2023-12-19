@@ -4,8 +4,10 @@ import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { View } from '../../components/Themed';
 import AlarmList, {AlarmListInterface, Day} from '../../components/AlarmList';
 import { Button, Divider } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
 const AlarmListScreen = () => {
+    const navigation = useRouter();
     const [isPressed, setIsPressed] = useState<boolean>(false);
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
@@ -30,11 +32,17 @@ const AlarmListScreen = () => {
         setTimeoutId(id);
       };
 
-    const handlePressOut = () => {
+    const handlePressOut = (alarmTitle: string) => {
         if (timeoutId) {
             clearTimeout(timeoutId);
             setTimeoutId(null);
-        }        
+        }
+        // If it's a long press, don't redirect
+        if (isPressed) {
+            return;
+        }
+        console.log(alarmTitle);
+        navigation.push({pathname:'/viewAlarm', params:{alarmTitle}});
     };
 
     const cancelSelection = () => {
@@ -73,7 +81,7 @@ const AlarmListScreen = () => {
     
     const itemAlarm = ({ item, index }: { item: AlarmListInterface, index: number }) => (
         <View>
-            <TouchableOpacity onPressIn={() => handlePressIn(index)} onPressOut={handlePressOut} >
+            <TouchableOpacity onPressIn={() => handlePressIn(index)} onPressOut={() => handlePressOut(item.title)} >
                 <AlarmList title={item.title} description={item.description} enable={item.enable} selected={item.selected} day={item.day} isSelected={isPressed}
                     onUpdate={(key: keyof AlarmListInterface, newValue: any) => updateAlarmList(index, key, newValue)}
                 />
@@ -108,7 +116,7 @@ const AlarmListScreen = () => {
                 <Button
                     style={[styles.button, { display: !isPressed ? 'flex' : 'none' }]}
                     icon="plus"
-                    onPress={() => {addAlarm();}} >
+                    onPress={() => { addAlarm(); } } children={undefined} >
                 </Button>
             </View>
         </View>
