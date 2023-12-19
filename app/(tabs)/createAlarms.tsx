@@ -22,7 +22,7 @@ export default function CreateAlarmsScreen() {
         case 'advanced':
           return <AdvancedAlarmForm />;
         case 'classic':
-          return <ClassicAlarmForm />;
+          return <ClassicAlarmForm editing={false} />;
         default:
           return null;
       }

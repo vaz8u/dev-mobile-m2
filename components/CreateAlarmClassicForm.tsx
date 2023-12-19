@@ -5,8 +5,10 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import InputTimePicker from './InputTimePicker';
-
-const ClassicAlarmForm = () => {
+interface ClassicAlarmFormProps {
+  editing: boolean;
+}
+const ClassicAlarmForm = ({ editing }: ClassicAlarmFormProps) => {
   const navigation = useRouter();
   const [isSwitchToggled, setIsSwitchToggled] = useState(false);
   const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
@@ -69,9 +71,15 @@ const ClassicAlarmForm = () => {
         <Button mode="contained" onPress={handleCancelButtonPress} disabled={false}>
             Annuler
         </Button>
-        <Button mode="contained" onPress={handleSubmit(onSubmit)}>
-            Créer
-        </Button>
+        {editing ? (
+          <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+              Modifier
+          </Button>
+        ) : (
+          <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+              Créer
+          </Button>
+        )}
     </View>
   </View>
   );

@@ -9,7 +9,7 @@ export default function TabOneScreen() {
   return (
     <View style={styles.container}>
       <AlarmListScreen></AlarmListScreen>
-      <Button icon="plus" mode="elevated" onPress={() => navigation.push('/(tabs)/createAlarms')}>
+      <Button icon="plus" mode="elevated" onPress={() => navigation.push('/(tabs)/createAlarms')} children={undefined}>
       </Button>
     </View>
   );
