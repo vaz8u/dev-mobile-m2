@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { CreateAccountInput } from './dto/create-account.input';
 import { UpdateAccountInput } from './dto/update-account.input';
 import { Account } from './entities/account.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt'
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class AccountsService {
-    constructor(@InjectRepository(Account) private accountsRepository: Repository<Account>) {
-
+    constructor(@InjectModel(Account.name) private accountModel: Model<Account>) {
         this.create({
             username: 'admin',
             password: 'admin'
@@ -17,34 +16,57 @@ export class AccountsService {
     }
 
     async create(createAccountInput: CreateAccountInput): Promise<Account> {
+        if (await this.findOne(createAccountInput.username) !== null) {
+            return null;
+        }
+
         createAccountInput.password = await bcrypt.hash(createAccountInput.password, 10);
 
-        const newAccount = this.accountsRepository.create(createAccountInput);
-
-        return this.accountsRepository.save(newAccount);
+        const newAccount = new this.accountModel(createAccountInput);
+        const res = await newAccount.save();
+        return res;
     }
 
     async findAll(): Promise<Account[]> {
-        return await this.accountsRepository.find();
+        return await this.accountModel.find().exec();
     }
 
     async findOne(username: string): Promise<Account> {
-        return this.accountsRepository.findOne({
-            where: {
-                username: username
-            }
-        });
+        return await this.accountModel.findOne({
+            username: username
+        }).exec();
     }
 
-    async update(username: string, updateAccountInput: UpdateAccountInput): Promise<Account> {
-        const updateResult = await this.accountsRepository.update(username, updateAccountInput);
-        if (updateResult.affected === 0) {
+    async update(updateAccountInput: UpdateAccountInput): Promise<Account> {
+        if (!updateAccountInput.username && !updateAccountInput.password) {
             return null;
         }
-        return this.findOne(username);
+
+        const account = await this.findOne(updateAccountInput.target);
+
+        if (!account)
+            return null;
+
+        const updateResult = await this.accountModel.updateOne({
+            username: updateAccountInput.target
+        }, {
+            username: updateAccountInput.username ?? account.username,
+            password: updateAccountInput.password ?? account.password
+        }).exec();
+
+
+        if (updateResult.modifiedCount === 0) {
+            return null;
+        }
+
+        return await this.findOne(updateAccountInput.username ?? account.username);
     }
 
     async remove(username: string): Promise<boolean> {
-        return (await this.accountsRepository.delete(username)).affected !== 0;
+        const deleteResult = await this.accountModel.deleteOne({
+            username: username
+        }).exec();
+
+        return deleteResult.deletedCount === 1;
     }
 }

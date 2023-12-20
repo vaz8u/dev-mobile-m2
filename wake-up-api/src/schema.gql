@@ -3,8 +3,8 @@
 # ------------------------------------------------------
 
 type Account {
+  _id: String!
   username: String!
-  password: String!
 }
 
 type LoginResponse {
@@ -32,6 +32,9 @@ input CreateAccountInput {
 input UpdateAccountInput {
   username: String
   password: String
+
+  """the username of the account to target"""
+  target: String!
 }
 
 input LoginAccountInput {
