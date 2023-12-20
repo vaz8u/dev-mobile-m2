@@ -174,3 +174,4 @@ expo-env.d.ts
 # @end expo-cli
 
 yarn.lock
+.env
