@@ -10,7 +10,8 @@
     "test": "jest --watchAll"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "coveragePathIgnorePatterns": "/wake-up-api"
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
