@@ -1,14 +1,21 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
-@Entity()
+export type AccountDocument = HydratedDocument<Account>;
+
+@Schema()
 @ObjectType()
 export class Account {
-    @PrimaryColumn()
+    @Field(() => String)
+    _id: MongooseSchema.Types.ObjectId | string;
+
+    @Prop({ required: true })
     @Field(() => String)
     username: string;
 
-    @Column()
-    @Field(() => String)
+    @Prop({ required: true })
     password: string;
 }
+
+export const AccountSchema = SchemaFactory.createForClass(Account);
