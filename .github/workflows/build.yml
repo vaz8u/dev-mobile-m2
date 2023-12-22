@@ -23,13 +23,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      
-      - name: Install auth dependencies
-        run: npm install
-        working-directory: ./wake-up-api
 
       - name: Run tests with coverage
-        run: npm test --config=jest.config.ts --coverage
+        run: npm test --coverage
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
