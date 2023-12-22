@@ -11,7 +11,7 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "coveragePathIgnorePatterns": ["/wake-up-api"]
+    "coveragePathIgnorePatterns": ["./wake-up-api/"]
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
