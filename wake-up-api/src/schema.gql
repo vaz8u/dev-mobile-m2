@@ -2,9 +2,18 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Alarm {
+  _id: String!
+  name: String!
+  triggeredDate: String!
+  alarmSound: Boolean!
+  vibratorSound: Boolean!
+}
+
 type Account {
   _id: String!
   username: String!
+  alarms: [Alarm!]
 }
 
 type LoginResponse {
@@ -15,12 +24,17 @@ type LoginResponse {
 type Query {
   accounts: [Account!]!
   account(username: String!): Account!
+  alarms: [Alarm!]!
+  alarm(id: String!): Alarm!
 }
 
 type Mutation {
   createAccount(createAccountInput: CreateAccountInput!): Account!
   updateAccount(updateAccountInput: UpdateAccountInput!): Account!
   removeAccount(username: String!): Boolean!
+  createAlarm(alarmInput: CreateAlarmInput!): Alarm!
+  updateAlarm(updateAlarmInput: UpdateAlarmInput!): Alarm!
+  deleteAlarm(alarmId: String!): Boolean!
   login(loginAccountInput: LoginAccountInput!): LoginResponse!
 }
 
@@ -35,6 +49,21 @@ input UpdateAccountInput {
 
   """the username of the account to target"""
   target: String!
+}
+
+input CreateAlarmInput {
+  name: String!
+  triggeredDate: String!
+  alarmSound: Boolean!
+  vibratorSound: Boolean!
+}
+
+input UpdateAlarmInput {
+  id: String!
+  name: String
+  triggeredDate: String
+  alarmSound: Boolean
+  vibratorSound: Boolean
 }
 
 input LoginAccountInput {
