@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
   <file path="/Users/vaz/Documents/GitHub/dev-mobile-m2/components/__tests__/services/CalculAlarmeService.test.ts">
-    <testCase name="calculAlarme devrait calculer l&apos;heure d&apos;activation de l&apos;alarme correctement" duration="9"/>
-    <testCase name="calculAlarme devrait calculer l&apos;heure d&apos;activation de l&apos;alarme correctement si s&apos;allume la veille" duration="1"/>
-  </file>
-  <file path="/Users/vaz/Documents/GitHub/dev-mobile-m2/node_modules/sudo-prompt/test.js">
-  </file>
-  <file path="/Users/vaz/Documents/GitHub/dev-mobile-m2/node_modules/@expo/package-manager/node_modules/sudo-prompt/test.js">
+    <testCase name="calculAlarme devrait calculer l&apos;heure d&apos;activation de l&apos;alarme correctement" duration="1"/>
+    <testCase name="calculAlarme devrait calculer l&apos;heure d&apos;activation de l&apos;alarme correctement si s&apos;allume la veille" duration="0"/>
   </file>
 </testExecutions>
