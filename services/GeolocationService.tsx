@@ -24,8 +24,23 @@ const GeolocationService = () => {
     }
   };
 
+  const getLocationWithAdresse = async (adress : string) => {
+    const geocodedLocation = await Location.geocodeAsync(adress);
+    console.log(geocodedLocation);
+    return geocodedLocation;
+  };
+
+  const getReverseLocation = async (latitude : number, longitude: number) => {
+    const reverseGeolocalisationAdress = await Location.reverseGeocodeAsync({
+      longitude: longitude,
+      latitude: latitude
+    })
+    console.log("Adresse : " + reverseGeolocalisationAdress);
+    return reverseGeolocalisationAdress;
+  };
+
   // expose the functions and data you want to use in other components
-  return { getLocation };
+  return { getLocation, getLocationWithAdresse, getReverseLocation };
 };
 
 export default GeolocationService;
