@@ -4,7 +4,7 @@ import { UpdateAccountInput } from './dto/update-account.input';
 import { Account } from './entities/account.entity';
 import * as bcrypt from 'bcrypt'
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class AccountsService {
@@ -68,5 +68,45 @@ export class AccountsService {
         }).exec();
 
         return deleteResult.deletedCount === 1;
+    }
+
+    async addAlarmToAccount(username: string, alarmId: Types.ObjectId) {
+        const account = await this.accountModel.findOne({username:username}).exec();
+
+        if (account) {
+            account.alarms.push(alarmId);
+            await account.save();
+            console.log("res",account);
+        }
+    }
+
+    async findUsersByAlarm(alarmId: string): Promise<Account[]> {
+        try {
+          // Find users where the given alarmId is present in their alarms array
+          const users = await this.accountModel.find({ alarms: alarmId }).exec();
+          return users;
+        } catch (error) {
+          console.error('Error finding users by alarm:', error);
+          throw error;
+        }
+    }
+
+    async removeAlarmFromAccount(username: string, alarmId: string): Promise<Account> {
+        try {
+            const user = await this.accountModel.findOne({username:username}).exec();
+      
+            if (!user || !user.alarms) {
+              throw new Error('User or alarms array not found.');
+            }
+      
+            user.alarms = user.alarms.filter((alarm) => !alarm.equals(alarmId));
+      
+            await user.save();
+      
+            return user;
+          } catch (error) {
+            console.error('Error removing alarm from account:', error);
+            throw error;
+          }
     }
 }
