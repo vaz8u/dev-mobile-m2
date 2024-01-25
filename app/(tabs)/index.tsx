@@ -4,6 +4,7 @@ import { Text, View } from '../../components/Themed';
 import AlarmListScreen from '../../views/alarmList';
 import { Button } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+
 export default function TabOneScreen() {
   const navigation = useRouter();
   return (
