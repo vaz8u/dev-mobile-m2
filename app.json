@@ -16,7 +16,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.wakeUp"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +31,13 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.989732552774-i88hshcigsakof1147e2h5tjb8rnr2pv"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
