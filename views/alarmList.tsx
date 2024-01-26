@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
-import { View } from '../../components/Themed';
-import AlarmList, {AlarmListInterface, Day} from '../../components/AlarmList';
+import { View } from '../components/Themed';
+import AlarmList, {AlarmListInterface, Day} from '../components/AlarmList';
 import { Button, Divider } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { useGetAlarms, useDeleteAlarm } from '../../services/api/graphqlService';
