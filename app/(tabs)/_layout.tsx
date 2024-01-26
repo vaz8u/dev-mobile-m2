@@ -3,6 +3,7 @@ import { Link, Tabs } from 'expo-router';
 import { Pressable, useColorScheme } from 'react-native';
 
 import Colors from '../../constants/Colors';
+import { Icon } from 'react-native-paper';
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
@@ -19,62 +20,41 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
       }}>
-      <Tabs.Screen
+       <Tabs.Screen
         name="index"
         options={{
           title: 'Alarmes',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          tabBarIcon: ({ color }) => <Icon color={color} source="alarm" size={28}/>,
+          // headerRight: () => (
+          //   <Link href="/modal" asChild>
+          //     <Pressable>
+          //       {({ pressed }) => (
+          //         <FontAwesome
+          //           name="info-circle"
+          //           size={25}
+          //           color={Colors[colorScheme ?? 'light'].text}
+          //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+          //         />
+          //       )}
+          //     </Pressable>
+          //   </Link>
+          // ),
         }}
       />
       <Tabs.Screen
         name="calendar"
         options={{
           title: 'Calendrier',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <Icon color={color} source="calendar" size={28}/>,
         }}
       />
-      <Tabs.Screen
-        name="two"
+      {/* <Tabs.Screen
+        name="settings"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Paramètres',
+          tabBarIcon: ({ color }) => <Icon color={color} source="settings" size={28}/>,
         }}
-      />
-      <Tabs.Screen
-        name="alarmSetup"
-        options={{
-          title: 'alarmSetup',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="createAlarms"
-        options={{
-          href: null,
-          title: 'Mes alarmes > Créer'
-        }}
-      />
-      <Tabs.Screen
-        name="viewAlarm"
-        options={{
-          href: null,
-          title: 'Mes alarmes > Alarme'
-        }}
-      />
+      /> */}
     </Tabs>
     
   );
