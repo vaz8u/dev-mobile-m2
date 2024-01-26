@@ -5,6 +5,7 @@ import { View } from '../../components/Themed';
 import ClassicAlarmForm from '../../components/CreateAlarmClassicForm';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 
+
 const ViewAlarmScreen = () => {
     const params = useLocalSearchParams();
     let alarmTitle = params.alarmTitle || 'Default Alarm Title';

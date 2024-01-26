@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View } from '../../components/Themed';
 import AlarmListScreen from '../../views/alarmList';
 import { Button } from 'react-native-paper';
@@ -12,7 +11,7 @@ export default function TabOneScreen() {
       <AlarmListScreen></AlarmListScreen>
         <Button onPress={() => navigation.push('/pages/connexion')}><Text>connexion</Text>
         </Button>
-        <Button icon="plus" mode="elevated" onPress={() => navigation.push('/../../views/createAlarms')} children={undefined}>
+        <Button icon="plus" mode="elevated" onPress={() => navigation.push('/(tabs)/createAlarms')} children={undefined}>
       </Button>
     </View>
   );
