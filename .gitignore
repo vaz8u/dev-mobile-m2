@@ -175,3 +175,4 @@ expo-env.d.ts
 
 yarn.lock
 .env
+.env.local

@@ -18,7 +18,7 @@ const ViewAlarmScreen = () => {
 
     return (
         <View style={styles.scene}>
-            <ClassicAlarmForm editing={true}></ClassicAlarmForm>
+            <ClassicAlarmForm editing={true} alarmId={params.alarmId as string}></ClassicAlarmForm>
         </View>
     );
 }

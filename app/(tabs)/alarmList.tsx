@@ -1,22 +1,40 @@
-import React, { useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
 import { View } from '../../components/Themed';
 import AlarmList, {AlarmListInterface, Day} from '../../components/AlarmList';
 import { Button, Divider } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+import { useGetAlarms, useDeleteAlarm } from '../../services/api/graphqlService';
 
 const AlarmListScreen = () => {
     const navigation = useRouter();
     const [isPressed, setIsPressed] = useState<boolean>(false);
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
-
-    const [alarmList, setAlarmList] = useState<AlarmListInterface[]>([
-        { title: "Alarm 1", description: "08:00", enable: true, selected: false, day: Day.Lundi },
-        { title: "Alarm 2", description: "09:00", enable: true, selected: false, day: Day.Mardi },
-        { title: "Alarm 3", description: "09:00", enable: true, selected: false, day: Day.Mercredi },
-    ]);
-
+    const [alarmList, setAlarmList] = useState<AlarmListInterface[]>([]);
+    const [deleteAlarm] = useDeleteAlarm();
+    const { data, refetch } = useGetAlarms();
+    useEffect(() => {
+        const fetchAlarms = () => {
+            refetch().then((alarmsData) => {
+              const fetchedAlarms = alarmsData?.data?.alarms || [];
+              const updatedList = fetchedAlarms.map((alarm: any) => ({
+                _id: alarm._id,
+                title: alarm.name,
+                description: alarm.triggeredDate,
+                enable: true,
+                selected: false,
+                day: Day.Mercredi,
+              }));
+              setAlarmList(updatedList);
+            }).catch((error) => {
+              console.error('Error fetching alarms:', error);
+            });
+          };
+    
+        fetchAlarms();
+      }, [data]);
+    
     const handlePressIn = (index: number) => {
         if (timeoutId) {
             clearTimeout(timeoutId);
@@ -32,7 +50,7 @@ const AlarmListScreen = () => {
         setTimeoutId(id);
       };
 
-    const handlePressOut = (alarmTitle: string) => {
+    const handlePressOut = (alarmTitle: string, alarmId: string) => {
         if (timeoutId) {
             clearTimeout(timeoutId);
             setTimeoutId(null);
@@ -42,7 +60,7 @@ const AlarmListScreen = () => {
             return;
         }
         console.log(alarmTitle);
-        navigation.push({pathname:'/viewAlarm', params:{alarmTitle}});
+        navigation.push({pathname:'/viewAlarm', params:{alarmTitle, alarmId}});
     };
 
     const cancelSelection = () => {
@@ -55,14 +73,35 @@ const AlarmListScreen = () => {
           setAlarmList(updatedList);
     }
 
-    const deleteSelection = () => {
-        setIsPressed(false);
-        const updatedList: AlarmListInterface[] = alarmList.filter(alarm => !alarm.selected);
-        setAlarmList(updatedList);
-    }
+    const deleteSelection = async () => {
+        try {
+          setIsPressed(false);
+          const selectedAlarms = alarmList.filter(alarm => alarm.selected);
+    
+          const alarmIdsToDelete = selectedAlarms.map(alarm => alarm._id);
+          await Promise.all(
+            alarmIdsToDelete.map(async (alarmId:string) => {
+              await deleteAlarm({
+                variables: {
+                  alarmId: alarmId,
+                },
+              }).catch(error => {
+                console.error(`Error deleting alarm ${alarmId}:`, error.networkError.result.errors);
+              });;
+            })
+          );
+          setAlarmList((prevList) =>
+            prevList.filter((alarm) => !alarm.selected)
+          );
+          await refetch();
+        } catch (error) {
+          console.error('Error deleting alarm:', error);
+        }
+      };
 
     const addAlarm = () => {
         const newAlarm: AlarmListInterface = {
+            _id:'1',
             title: `Alarm ${alarmList.length + 1}`,
             description: "10:00", 
             enable: true, 
@@ -81,10 +120,9 @@ const AlarmListScreen = () => {
     
     const itemAlarm = ({ item, index }: { item: AlarmListInterface, index: number }) => (
         <View>
-            <TouchableOpacity onPressIn={() => handlePressIn(index)} onPressOut={() => handlePressOut(item.title)} >
+            <TouchableOpacity onPressIn={() => handlePressIn(index)} onPressOut={() => handlePressOut(item.title, item._id)} >
                 <AlarmList title={item.title} description={item.description} enable={item.enable} selected={item.selected} day={item.day} isSelected={isPressed}
-                    onUpdate={(key: keyof AlarmListInterface, newValue: any) => updateAlarmList(index, key, newValue)}
-                />
+                onUpdate={(key: keyof AlarmListInterface, newValue: any) => updateAlarmList(index, key, newValue)} _id={item._id} />
             </TouchableOpacity>
             <Divider />
         </View>
