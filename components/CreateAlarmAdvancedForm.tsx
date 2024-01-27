@@ -6,6 +6,9 @@ import InputTimePicker from './InputTimePicker';
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import GeolocationService from '../services/GeolocationService';
+import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.input';
+import { useCreateAlarm, useGetAlarms } from '../services/api/graphqlService';
 
 const AdvancedAlarmForm = () => {
   const navigation = useRouter();
@@ -13,6 +16,10 @@ const AdvancedAlarmForm = () => {
   const [isSecondSwitchToggled, setIsSecondSwitchToggled] = useState(false);
   const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
   const [isVibratorActivated, setIsVibratorActivated] = useState(false);
+  const [createAlarm] = useCreateAlarm();
+  const { refetch } = useGetAlarms();
+
+  const { getLocationWithAdresse } = GeolocationService();
 
   const handleCancelButtonPress = () => {
     navigation.push("/");
@@ -43,18 +50,49 @@ const AdvancedAlarmForm = () => {
       TimeTriggered: {hours:12, minutes:0}
     },
   });
-  const onSubmit = (data: any) => {
-    console.log("Affichage des données:");
-    console.log("Nom de l'alarme: ", data.Name);
-    console.log("Départ de : ", data.Departure);
-    console.log("Arrivée à : ", data.Arrival);
-    if(isFirstSwitchToggled)
-      console.log("Départ à ", data.DepartureTime.hours,"h",data.DepartureTime.minutes);
-    if(isSecondSwitchToggled)
-      console.log("Arrivée à ", data.ArrivalTime.hours,"h",data.ArrivalTime.minutes);
-    console.log("Son de l'alarme: ",isAlarmSoundActivated);
-    console.log("Vibreur: ", isVibratorActivated);
+
+  const onSubmit = async (data: any) => {
+    let valid = true;
+
+    await getLocationWithAdresse(data.Departure).then((locationAdress) =>{
+      if(locationAdress.length == 0) valid = false; 
+    })
+    .catch((error) => {
+      valid = false;
+      console.error("Error getting location:", error);
+    });
+
+    await getLocationWithAdresse(data.Arrival).then((locationAdress) =>{
+      if(locationAdress.length == 0) valid = false; 
+    })
+    .catch((error) => {
+      valid = false;
+      console.error("Error getting location:", error);
+    });
+
+    if(valid){
+      console.log("Affichage des données:");
+      console.log("Nom de l'alarme: ", data.Name);
+      console.log("Départ de : ", data.Departure);
+      console.log("Arrivée à : ", data.Arrival);
+      if(isFirstSwitchToggled)
+        console.log("Départ à ", data.DepartureTime.hours,"h",data.DepartureTime.minutes);
+      if(isSecondSwitchToggled)
+        console.log("Arrivée à ", data.ArrivalTime.hours,"h",data.ArrivalTime.minutes);
+      console.log("Son de l'alarme: ",isAlarmSoundActivated);
+      console.log("Vibreur: ", isVibratorActivated);
+      const input: CreateAlarmInput = {
+        name: data.Name,
+        triggeredDate: '2024-01-10T08:00:00Z',
+        alarmSound: isAlarmSoundActivated,
+        vibratorSound: isVibratorActivated,
+      };
+      await createAlarm({ variables: { alarmInput: input } });
+      refetch();
+      navigation.push("/");
+    }
   };
+
   return (
       <View style={[styles.scene]}>
           <Controller control={control} rules={{required: true}}
@@ -66,6 +104,7 @@ const AdvancedAlarmForm = () => {
           )}
           name="Name"/>
         {errors.Name && <Text style={[styles.text]}>This is required.</Text>}
+
         <Controller control={control} rules={{required: true}}
           render={({ field: { onChange, onBlur, value } }) => (
           <InputLocation label={"Départ"} value={value} placeholder={"Placeholder"} onBlur={onBlur}
@@ -83,9 +122,12 @@ const AdvancedAlarmForm = () => {
           )}
           name="Arrival"/>
         {errors.Arrival && <Text style={[styles.text]}>This is required.</Text>}
+
         <InputTimePicker name="ArrivalTime" label={"Heure d'arrivée :"} optional={true} control={control} setValue={setValue} toggled={isSecondSwitchToggled} onToggleSwitch={() => handleToggleSwitch(2)}></InputTimePicker>
+          
           <ToggleParameter paramTitle="Son de l'alarme" isParamActivated={isAlarmSoundActivated} onToggle={handleToggleParameter}></ToggleParameter>
           <ToggleParameter paramTitle="Vibreur" isParamActivated={isVibratorActivated} onToggle={handleToggleParameter}></ToggleParameter>
+          
           <View style= {styles.row}>
               <Button mode="contained" onPress={handleCancelButtonPress} disabled={false}>
                   Annuler

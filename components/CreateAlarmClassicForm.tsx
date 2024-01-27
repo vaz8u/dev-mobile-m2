@@ -1,23 +1,27 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import InputTimePicker from './InputTimePicker';
+import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.input';
+import { GET_ALARMS, useCreateAlarm, useGetAlarm, useGetAlarms, useUpdateAlarm } from '../services/api/graphqlService';
 interface ClassicAlarmFormProps {
   editing: boolean;
+  alarmId: string;
 }
-const ClassicAlarmForm = ({ editing }: ClassicAlarmFormProps) => {
+const ClassicAlarmForm = ({ editing, alarmId }: ClassicAlarmFormProps) => {
   const navigation = useRouter();
   const [isSwitchToggled, setIsSwitchToggled] = useState(false);
   const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
   const [isVibratorActivated, setIsVibratorActivated] = useState(false);
 
-  const handleCancelButtonPress = () => {
-    navigation.push("/");
-  };
-  
+  const [createAlarm] = useCreateAlarm();
+  const [updateAlarm] = useUpdateAlarm();
+  const { refetch } = useGetAlarms();
+  const { alarm } = useGetAlarm(alarmId);
+
   const { control, setValue, handleSubmit, formState: { errors }} = useForm({
     defaultValues: {
       Name: "",
@@ -28,13 +32,56 @@ const ClassicAlarmForm = ({ editing }: ClassicAlarmFormProps) => {
       TimeTriggered: {hours:12, minutes:0}
     },
   });
+
+  useEffect(() => {
+    if(editing && alarm){
+      const { name, triggeredDate, alarmSound, vibratorSound } = alarm;
+      setValue("Name", name);
+      //Needs to setValue for the date as well
+      setIsAlarmSoundActivated(alarmSound);
+      setIsVibratorActivated(vibratorSound);
+    }
+  }, [editing, alarm]);
+  const handleCancelButtonPress = () => {
+    navigation.push("/");
+  };
   
-  const onSubmit = (data: any) => {
-    console.log("Affichage des données:");
-    console.log("Nom de l'alarme: ", data.Name);
-    console.log("Alarme à : ", data.TimeTriggered.hours, "h", data.TimeTriggered.minutes);
-    console.log("Son de l'alarme: ",isAlarmSoundActivated);
-    console.log("Vibreur: ", isVibratorActivated);
+  const onSubmit = async (data: any) => {
+    try {
+      console.log("Affichage des données:");
+      console.log("Nom de l'alarme: ", data.Name);
+      console.log("Alarme à : ", data.TimeTriggered.hours, "h", data.TimeTriggered.minutes);
+      console.log("Son de l'alarme: ", isAlarmSoundActivated);
+      console.log("Vibreur: ", isVibratorActivated);
+  
+      const input: CreateAlarmInput = {
+        name: data.Name,
+        triggeredDate: '2024-01-10T08:00:00Z',
+        alarmSound: isAlarmSoundActivated,
+        vibratorSound: isVibratorActivated,
+      };
+      
+      if(editing) {
+        await updateAlarm({
+          variables: {
+            updateAlarmInput: {
+              id: alarmId,
+              name: data.Name,
+              triggeredDate: '2024-01-10T08:00:00Z',
+              alarmSound: isAlarmSoundActivated,
+              vibratorSound: isVibratorActivated,
+            },
+            refetchQueries: [{ query: GET_ALARMS }],
+          },
+        });
+      } else {
+        await createAlarm({ variables: { alarmInput: input } });
+      }
+      refetch();
+      navigation.push("/");
+    } catch (error) {
+      console.error('Error creating alarm:', error);
+    }
   };
 
   const handleToggleSwitch = () => {

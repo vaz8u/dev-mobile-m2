@@ -1,6 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
+import { Alarm } from 'src/alarms/entities/alarm.entity';
 
 export type AccountDocument = HydratedDocument<Account>;
 
@@ -16,6 +17,10 @@ export class Account {
 
     @Prop({ required: true })
     password: string;
+
+    @Field(() => [Alarm], { nullable: true })
+    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Alarm' }] })
+    alarms?: Types.ObjectId[];
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);
