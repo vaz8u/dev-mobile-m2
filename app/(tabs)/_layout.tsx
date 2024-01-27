@@ -48,6 +48,20 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Icon color={color} source="calendar" size={28}/>,
         }}
       />
+      <Tabs.Screen
+        name="createAlarms"
+        options={{
+          href: null,
+          title: 'Mes alarmes > Créer'
+        }}
+      />
+      <Tabs.Screen
+        name="viewAlarm"
+        options={{
+          href: null,
+          title: 'Mes alarmes > Alarme'
+        }}
+      />
       {/* <Tabs.Screen
         name="settings"
         options={{
