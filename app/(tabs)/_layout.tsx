@@ -62,13 +62,13 @@ export default function TabLayout() {
           title: 'Mes alarmes > Alarme'
         }}
       />
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="settings"
         options={{
           title: 'Paramètres',
           tabBarIcon: ({ color }) => <Icon color={color} source="settings" size={28}/>,
         }}
-      /> */}
+      />
     </Tabs>
     
   );
