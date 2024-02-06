@@ -3,10 +3,12 @@ import { View, Text, Button, TextInput, Alert } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { LocationObject } from 'expo-location';
 import GeolocationService from '../services/GeolocationService';
+import { useRouter } from 'expo-router';
 /**
  * AlarmForm component for setting up alarms.
  */
 const AlarmForm = () => {
+  const navigation = useRouter();
   const { getLocation } = GeolocationService();
   const { control, handleSubmit } = useForm();
   const [jsonFile, setJsonFile] = useState(null);
@@ -39,19 +41,13 @@ const AlarmForm = () => {
     console.log('JSON File:', jsonFile);
     setJsonFile(null);
   };
-  /**
-   * Handles importing JSON file.
-   */
-  const handleImportJson = () => {
-    Alert.alert('Import JSON', 'Implement JSON file import functionality here');
-  };
   
 
   return (
     <View>
       <Text>Set Up Alarms</Text>
 
-      <Button title="Importer un emploi du temps" onPress={handleImportJson} />
+      <Button title="Importer un emploi du temps" onPress={()=> navigation.push('/pages/imports')} />
 
       <Controller
         control={control}
