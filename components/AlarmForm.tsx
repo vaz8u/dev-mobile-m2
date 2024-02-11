@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+
 import { useForm, Controller } from 'react-hook-form';
 import { LocationObject } from 'expo-location';
 import GeolocationService from '../services/GeolocationService';
 import { useRouter } from 'expo-router';
+import { Button } from 'react-native-paper';
+
 /**
  * AlarmForm component for setting up alarms.
  */
@@ -43,11 +46,12 @@ const AlarmForm = () => {
   };
   
 
+
   return (
     <View>
       <Text>Set Up Alarms</Text>
 
-      <Button title="Importer un emploi du temps" onPress={()=> navigation.push('/pages/imports')} />
+      <Button icon="calendar-import" style={styles.bouton} onPress={()=> navigation.push('/pages/imports')} >Importer des emplois du temps</Button>
 
       <Controller
         control={control}
@@ -63,10 +67,22 @@ const AlarmForm = () => {
         rules={{ required: 'Entrez une durée en minutes' }}
       />
 
-      <Button title="Créer les alarmes" onPress={handleSubmit(onSubmit)} />
-      <Button title="Récupérez mes coordonnées" onPress={getCoordinates} />
+      <Button onPress={handleSubmit(onSubmit)} >
+        Créer les alarmes
+      </Button>
+      <Button onPress={getCoordinates} >
+        Récupérez mes coordonnées
+      </Button>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  bouton :{
+    width:'75%',
+    alignSelf:'center',
+  },
+});
+
 export default AlarmForm;
 

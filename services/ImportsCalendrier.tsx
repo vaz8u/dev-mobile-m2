@@ -1,6 +1,6 @@
 import * as ICAL from 'ical.js';
 import RNCalendarEvents from 'react-native-calendar-events';// https://github.com/wmcmahan/react-native-calendar-events
-import { Evenement } from '../models/Evenement';
+import { Evenement, Calendrier } from '../models/Evenement';
 import liensEDT from '../assets/liensEDT.json';
 import { View } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -38,8 +38,6 @@ export async function convertIcsToJson(_data:string): Promise<any> {
             description: event.description
         };
     });
-
-    console.log(JSON.stringify(events, null, 2));
     return events;
 }
 
@@ -59,15 +57,26 @@ export function creerElementsCalendrierFromJson(json: any): Evenement[] {
     return elementsCalendrier;
 }
 
+// Retourne les calendriers détectés dans le téléphone sous forme de liste de string
 export async function getCalendriers(): Promise<any>{
     await RNCalendarEvents.requestPermissions();
     if(await RNCalendarEvents.checkPermissions()){
         let calendars = await RNCalendarEvents.findCalendars();
         let events = await RNCalendarEvents.fetchAllEvents(new Date().toISOString(), new Date(2024, 12, 31).toISOString());
-        afficherCalendriersTrouvees(calendars, events);
-        // retourne les calendrier sous forme de liste de string
-        return calendars.map((calendar: any) => calendar.title);
+        afficherCalendriersTrouvees(calendars, events); // DEBUG
+        return calendars.map((calendar: any) => calendar.title); 
     }
+}
+
+// Ajoute le calendrier à la liste des calendriers de l'utilisateur
+export async function getAndSetCalendriers(nomCalendrier:string): Promise<any>{
+    let events = await RNCalendarEvents.fetchAllEvents(new Date().toISOString(), new Date(2024, 12, 31).toISOString());
+    // Récuperer les evenements du calendrier
+    let eventsCalendrier = events.filter((event: any) => event.calendar.title === nomCalendrier);
+    // Créer le calendrier
+    let calendrier = new Calendrier(creerElementsCalendrierFromJson(eventsCalendrier), nomCalendrier, 'blue');
+    // Appel API
+    return await addCalendrier(calendrier)
 }
 
 function afficherCalendriersTrouvees(calendars: any, events: any){
@@ -96,14 +105,21 @@ export function afficherCalendriersTrouveesAvecViewText(calendars: any, events: 
 // IMPORT MANUEL //
 export async function importManuel(): Promise<any>{
     try {
-        const res = await DocumentPicker.pick({
-            type: [DocumentPicker.types.allFiles],
+        const files = await DocumentPicker.pick({
+            //type text/calendar
+            type: [DocumentPicker.types.allFiles]
         });
-        console.log(res);
+        let res: Calendrier[] = [];
+        for (const element of files) {
+            const calendrier = new Calendrier(await convertIcsToJson(element.uri), element.name!, 'blue');
+            res.push(calendrier);
+        }
         return res;
     } catch (err) {
-        if (DocumentPicker.isCancel(err))
+        if (DocumentPicker.isCancel(err)){
             console.log('Document picker cancelled');
+            return [];
+        }
         else
             console.log('Document picker error: ',err);
     }
@@ -111,13 +127,13 @@ export async function importManuel(): Promise<any>{
 
 // FONCTIONS APPEL API //
 // Ajouter un calendrier à l'utilisateur : ajoute le calendrier à la liste des calendriers de l'utilisateur
-export async function addCalendrier(calendrier:any): Promise<any>{
+export async function addCalendrier(calendrier:Calendrier): Promise<any>{
     //TODO
     return true;
 }
 
 // Supprimer un calendrier de l'utilisateur : supprime le calendrier de la liste des calendriers de l'utilisateur
-export async function deleteCalendrier(calendrier:any): Promise<any>{
+export async function deleteCalendrier(calendrier:string): Promise<any>{
     //TODO
     return true;
 }

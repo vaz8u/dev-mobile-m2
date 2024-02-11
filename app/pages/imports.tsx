@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from "react-native";
-import { List, Button, Text, Snackbar, Searchbar, IconButton, Dialog, Portal } from 'react-native-paper';
+import { List, Button, Text, Snackbar, Searchbar, IconButton, Dialog } from 'react-native-paper';
 import liensEDT from '../../assets/liensEDT.json';
 import * as importsCalendriers from '../../services/ImportsCalendrier';
+import {Calendrier} from '../../models/Evenement';
 
 export default function App() {
     // Liste calendriers détéctés sur le téléphone
@@ -19,21 +20,27 @@ export default function App() {
     const [visible, setVisible] = useState(false);
     const onToggleSnackBar = () => setVisible(!visible);
     const onDismissSnackBar = () => setVisible(false);
-    const [text_snackbar, settext_snackbar] = useState('');
+    const [text_snackbar, settext_snackbar] = useState<string>('');
     async function ajoutCalendrier(item: string) {
       console.log("Ajout de ", item);
       // si item n'st pas dans liensEDT
       if(liensEDT.findIndex((lien: any) => lien.id === item) === -1){
         console.log("Ajout de ", item, " depuis le téléphone");
         // Si l'ajout à réussi
-        if(await importsCalendriers.addCalendrier(item)){
+        if(await importsCalendriers.getAndSetCalendriers(item)){
           onToggleSnackBar();
           settext_snackbar("Ajout de "+item.toUpperCase()+" à la liste des calendriers");
           setBoutons_coche_2(boutons_coche_2.map((value, index) => index === liens.findIndex((lien: any) => lien === item) ? false : value));
         }
+        // Si l'ajout n'a pas réussi
+        else {
+          console.log("Erreur lors de l'ajout de ", item);
+          onToggleSnackBar();
+          settext_snackbar("Erreur lors de l'ajout de "+item.toUpperCase()+" à la liste des calendriers");
+        }
       }
       // Si l'ajout à réussi
-      if(await importsCalendriers.addCalendrier(item)){
+      if(await importsCalendriers.getAndSetCalendriers(item)){
         onToggleSnackBar();
         settext_snackbar("Ajout de "+item.toUpperCase()+" à la liste des calendriers");
         setBoutons_coche(boutons_coche.map((value, index) => index === liensEDT.findIndex((lien: any) => lien.id === item) ? false : value));
@@ -51,7 +58,7 @@ export default function App() {
     const [visibleDialog, setVisibleDialog] = useState(false);
     const showDialog = () => setVisibleDialog(true);
     const hideDialog = () => setVisibleDialog(false);
-    const [deleteitem, setDeleteItem] = useState('');
+    const [deleteitem, setDeleteItem] = useState<string>('');
     function handleDeleteIconPress(item: string) {
       console.log("Suppresion de ",item);
       showDialog();
@@ -87,6 +94,21 @@ export default function App() {
       }
     }
 
+    // Calendriers manuels
+    const [calendriersManuels, setCalendriersManuels] = useState<Calendrier[]>([]);
+    function boutonAjouterImport(calendrier : string){
+      return (
+      <Button icon="import"
+              mode='contained-tonal'
+              disabled={undefined}
+              onPress={() => {
+                ajoutCalendrier(calendrier);
+                setCalendriersManuels(calendriersManuels.filter((item) => item.nom !== calendrier));
+              }}>
+                Importer
+      </Button>);
+    }
+
     return (
         <View>
           <Text style={styles.titre}>Options d'importation d'emploi du temps</Text>
@@ -106,9 +128,9 @@ export default function App() {
                 .map((lien: any) => lien.id)
                 .filter((lien: any) => lien.toUpperCase() !== 'BASE')
                 .filter((lien: any) => lien.toUpperCase().includes(searchQuery.toUpperCase()))
-                .map((lien: any, index: number) => (
+                .map((lien: any) => (
                   <List.Item
-                    key={index}
+                    key={lien.id}
                     title={lien.toUpperCase()}
                     right={() => boutonAjouter(lien,'fac')}
                   />
@@ -135,9 +157,9 @@ export default function App() {
                 {liens.length === 0 && !loading ?(
                 <Text style={styles.text}>La liste est vide</Text>
               ) : (
-                liens.map((subItem, subIndex) => (
+                liens.map((subItem) => (
                   <List.Item
-                    key={subIndex}
+                    key={subItem}
                     title={subItem}
                     right={() => boutonAjouter(subItem,'phone')}
                   />
@@ -148,10 +170,25 @@ export default function App() {
           <Button
               id="Import manuel"
               mode='elevated'
+              icon='file-import-outline'
               style={styles.button_center}
-              onPress={() => importsCalendriers.importManuel()}>
+              onPress={async () => setCalendriersManuels(await importsCalendriers.importManuel())}>
               Import manuel
           </Button>
+
+          {calendriersManuels != undefined && calendriersManuels.length > 0 ? (
+            <Text style={styles.titre}>Calendriers trouvés</Text>
+          ) : (<Text children={undefined}></Text>
+            // Code to be executed if the condition is false
+          )}
+
+          {calendriersManuels.map((calendrier) => (
+            <List.Item
+              key={calendrier.nom}
+              title={calendrier.nom}
+              right={() => boutonAjouterImport(calendrier.nom)}
+            />
+          ))}
 
           <Snackbar
             visible={visible}
@@ -187,12 +224,13 @@ const styles = StyleSheet.create({
   button_center: {
     width: '75%',
     alignSelf: 'center',
-    marginTop: 10
+    marginTop: 30,    
   },
   titre : {
     textAlign: 'center',
     margin: 10,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontSize: 18,
   },
   text : {
     textAlign: 'center',
