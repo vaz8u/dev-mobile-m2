@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import AlarmForm from '../../components/AlarmForm';
+import AlarmForm from '../components/AlarmForm';
 
 export default function TabTwoScreen() {
   return (

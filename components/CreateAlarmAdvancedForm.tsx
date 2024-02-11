@@ -7,6 +7,8 @@ import { Controller, useForm } from "react-hook-form";
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import GeolocationService from '../services/GeolocationService';
+import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.input';
+import { useCreateAlarm, useGetAlarms } from '../services/api/graphqlService';
 
 const AdvancedAlarmForm = () => {
   const navigation = useRouter();
@@ -14,6 +16,8 @@ const AdvancedAlarmForm = () => {
   const [isSecondSwitchToggled, setIsSecondSwitchToggled] = useState(false);
   const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
   const [isVibratorActivated, setIsVibratorActivated] = useState(false);
+  const [createAlarm] = useCreateAlarm();
+  const { refetch } = useGetAlarms();
 
   const { getLocationWithAdresse } = GeolocationService();
 
@@ -77,6 +81,15 @@ const AdvancedAlarmForm = () => {
         console.log("Arrivée à ", data.ArrivalTime.hours,"h",data.ArrivalTime.minutes);
       console.log("Son de l'alarme: ",isAlarmSoundActivated);
       console.log("Vibreur: ", isVibratorActivated);
+      const input: CreateAlarmInput = {
+        name: data.Name,
+        triggeredDate: '2024-01-10T08:00:00Z',
+        alarmSound: isAlarmSoundActivated,
+        vibratorSound: isVibratorActivated,
+      };
+      await createAlarm({ variables: { alarmInput: input } });
+      refetch();
+      navigation.push("/");
     }
   };
 

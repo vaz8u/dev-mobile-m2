@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Avatar, Checkbox, List, Switch } from 'react-native-paper';
 
 export interface AlarmListInterface {
+    _id: string,
     title: string,
     description: string,
     enable: boolean,
