@@ -17,7 +17,7 @@ export default function ConnexionScreen() {
 
   const handleLogin = () => {
     console.log(email, password);
-    navigation.push('/(tabs)/alarmList');
+    navigation.push('/pages/alarmList');
   }
 
   return (
