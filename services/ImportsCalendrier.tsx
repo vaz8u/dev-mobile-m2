@@ -6,7 +6,7 @@ import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 
-function getLienEDT_FAC(classe:string): string {
+export function getLienEDT_FAC(classe:string): string {
     // id = 'base'
     let res = liensEDT.find((lien: any) => lien.id === 'base')?.code;
     // id = 'classe'
@@ -30,14 +30,20 @@ export async function convertIcsToJson(_data:string): Promise<any> {
     // Convertir chaque événement en JSON
     const events = comp.getAllSubcomponents('vevent').map((vevent: any) => {
         const event = new ICAL.Event(vevent);
+        // Supprimer les duplications dans la description
+        const descriptionLines = event.description.split('\n');
+        const uniqueDescriptionLines = [...new Set(descriptionLines)];
+        const uniqueDescription = uniqueDescriptionLines.join('\n');
+
         return {
             summary: event.summary,
             start: event.startDate.toString(),
             end: event.endDate.toString(),
             location: event.location,
-            description: event.description
+            description: uniqueDescription
         };
     });
+    console.log(events);
     return events;
 }
 
@@ -79,7 +85,7 @@ export async function getAndSetCalendriers(nomCalendrier:string): Promise<any>{
     return await addCalendrier(calendrier)
 }
 
-function afficherCalendriersTrouvees(calendars: any, events: any){
+export function afficherCalendriersTrouvees(calendars: any, events: any){
     console.log('Calendriers trouvés:');
     calendars.forEach((calendar: any) => {
         console.log(`\t${calendar.title} (${calendar.source})`);
