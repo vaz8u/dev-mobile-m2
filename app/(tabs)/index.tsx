@@ -3,6 +3,13 @@ import { Text, View } from '../../components/Themed';
 import AlarmListScreen from '../../views/alarmList';
 import { Button } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+import LogRocket from '@logrocket/react-native';
+
+LogRocket.init('af6cqg/wakeup');
+LogRocket.identify("1", {
+  name: 'James Morrison',
+  email: 'jamesmorrison@example.com',
+});
 
 export default function TabOneScreen() {
   const navigation = useRouter();
