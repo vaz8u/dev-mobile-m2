@@ -8,14 +8,18 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
-    imports: [AccountsModule, PassportModule, JwtModule.registerAsync({
-        useFactory: () => ({
-            secret: process.env.JWT_SECRET,
-            signOptions: {
-                expiresIn: '3600s',
-            },
-        })
-    })],
-    providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy]
+  imports: [
+    AccountsModule,
+    PassportModule,
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: process.env.JWT_SECRET,
+        signOptions: {
+          expiresIn: '3600s',
+        },
+      }),
+    }),
+  ],
+  providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
 })
-export class AuthModule { }
+export class AuthModule {}
