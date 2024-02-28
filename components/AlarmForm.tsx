@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
 
 import { useForm, Controller } from 'react-hook-form';
 import { LocationObject } from 'expo-location';
 import GeolocationService from '../services/GeolocationService';
 import { useRouter } from 'expo-router';
-import { Button } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 
 /**
  * AlarmForm component for setting up alarms.

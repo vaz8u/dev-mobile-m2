@@ -1,9 +1,11 @@
+import { StyleSheet } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable, useColorScheme } from 'react-native';
+import { Tabs } from 'expo-router';
+import { useColorScheme } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import Colors from '../../constants/Colors';
-import { Icon } from 'react-native-paper';
+import { Button, Icon, Text } from 'react-native-paper';
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
@@ -14,6 +16,7 @@ function TabBarIcon(props: Readonly<{
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 export default function TabLayout() {
+  const navigation = useRouter();
   const colorScheme = useColorScheme();
   return (
     <Tabs
@@ -25,20 +28,11 @@ export default function TabLayout() {
         options={{
           title: 'Alarmes',
           tabBarIcon: ({ color }) => <Icon color={color} source="alarm" size={28}/>,
-          // headerRight: () => (
-          //   <Link href="/modal" asChild>
-          //     <Pressable>
-          //       {({ pressed }) => (
-          //         <FontAwesome
-          //           name="info-circle"
-          //           size={25}
-          //           color={Colors[colorScheme ?? 'light'].text}
-          //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-          //         />
-          //       )}
-          //     </Pressable>
-          //   </Link>
-          // ),
+          headerRight: () => (
+            <Button mode="elevated" style={styles.buttonConnexion} onPress={() => navigation.push('/pages/connexion')}>
+              <Text>connexion</Text>
+            </Button>
+          ),
         }}
       />
       <Tabs.Screen
@@ -73,3 +67,9 @@ export default function TabLayout() {
     
   );
 }
+
+const styles = StyleSheet.create({
+  buttonConnexion:{
+    margin: 5
+  }
+});

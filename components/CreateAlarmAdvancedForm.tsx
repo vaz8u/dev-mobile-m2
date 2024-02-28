@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { TextInput, Button, Text } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import InputLocation from './InputLocation';
 import InputTimePicker from './InputTimePicker';

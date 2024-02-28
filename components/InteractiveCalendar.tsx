@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
+import { Text } from 'react-native-paper';
 import { Calendar } from 'react-native-calendars';
 import { useGetAlarms } from '../services/api/graphqlService';
 import { parseAlarmDate, parseAlarmTime } from '../services/DateParserService';

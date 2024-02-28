@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Switch } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { Switch, Text } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
 import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 
