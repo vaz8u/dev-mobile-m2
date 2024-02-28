@@ -37,6 +37,7 @@ Notifications.setNotificationCategoryAsync('alarme', [
 // FONCTIONS //
 // Fonction pour programmer une notification
 export async function schedulePushNotification(notifAlarme: NotifAlarme) {
+  registerForPushNotificationsAsync();
   // Prepare the notification channel
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('alarm', {
@@ -45,6 +46,7 @@ export async function schedulePushNotification(notifAlarme: NotifAlarme) {
       sound: undefined, // <- for Android 8.0+, see channelId property below
     });
   }
+  console.log(notifAlarme.date);
   // Schedule the notification
   await Notifications.scheduleNotificationAsync({
     content: {
@@ -62,9 +64,8 @@ export async function schedulePushNotification(notifAlarme: NotifAlarme) {
 }
 
 // Fonction pour enregistrer le token de l'appareil
-export async function registerForPushNotificationsAsync() {
+async function registerForPushNotificationsAsync() {
   let token;
-
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('default', {
       name: 'default',
@@ -94,7 +95,7 @@ export async function registerForPushNotificationsAsync() {
   return token;
 }
 
-/*
+
 // TESTS //
 // Objet de test
 let notifAlarme: NotifAlarme = {
@@ -115,4 +116,3 @@ export function Test(){
   );
 
 }
-*/

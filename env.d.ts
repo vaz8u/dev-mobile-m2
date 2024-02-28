@@ -5,3 +5,5 @@ declare module '@env' {
     export const ADMIN_PASSWORD: string;
     export const expo_go: boolean;
  }
+
+declare module 'ical.js';

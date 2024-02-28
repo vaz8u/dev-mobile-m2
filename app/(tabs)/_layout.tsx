@@ -66,7 +66,7 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: 'Paramètres',
-          tabBarIcon: ({ color }) => <Icon color={color} source="settings" size={28}/>,
+          tabBarIcon: ({ color }) => <Icon color={color} source="cog" size={28}/>,
         }}
       />
     </Tabs>

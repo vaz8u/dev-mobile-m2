@@ -1,6 +1,5 @@
 import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import { schedulePushNotification, registerForPushNotificationsAsync } from './../../../services/NotifAlarmeService'; // Assurez-vous d'importer correctement le fichier contenant les fonctions à tester
+import { schedulePushNotification } from './../../../services/NotifAlarmeService'; // Assurez-vous d'importer correctement le fichier contenant les fonctions à tester
 
 jest.mock('expo-notifications', () => ({
   setNotificationHandler: jest.fn(),

@@ -66,7 +66,7 @@ export default function ConnexionScreen(props: Readonly<Props>) {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+      <Image source={require('../../assets/images/icon.png')} style={styles.logo} />
       <TextInput
         label="Email"
         value={email}
@@ -100,7 +100,7 @@ export default function ConnexionScreen(props: Readonly<Props>) {
 
 // Affiche ou non le bouton de connexion Google
 const setGoogleButton = () => {
-  if(!expo_go){ // si on est en dev sans expo go
+  if(expo_go){ // si on est en dev sans expo go
     let GoogleHButton = require('../../components/GoogleHandler');
     return(
       <GoogleHButton.GoogleHButton></GoogleHButton.GoogleHButton>

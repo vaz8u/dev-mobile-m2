@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.wakeUp"
     },
     "web": {
       "bundler": "metro",
@@ -37,7 +38,7 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.989732552774-i88hshcigsakof1147e2h5tjb8rnr2pv"
         }
-      ]
+      ],"expo-document-picker"
     ],
     "experiments": {
       "typedRoutes": true

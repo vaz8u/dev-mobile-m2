@@ -178,4 +178,4 @@ yarn.lock
 .env.local
 
 # ios
-ios/
+#ios/
