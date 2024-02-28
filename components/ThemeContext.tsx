@@ -7,7 +7,6 @@ export const ThemeProvider = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useState(DefaultTheme);
 
   const updateTheme = (newTheme: any) => {
-    console.log('Updating theme:', newTheme); // Log du nouveau thème
 
     setCurrentTheme(newTheme);
   };
