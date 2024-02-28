@@ -4,7 +4,7 @@ import { Evenement, Calendrier } from '../models/Evenement';
 import liensEDT from '../assets/liensEDT.json';
 import { View } from 'react-native';
 import { Button } from 'react-native-paper';
-import DocumentPicker from 'react-native-document-picker';
+import * as DP from 'expo-document-picker';
 
 export function getLienEDT_FAC(classe:string): string {
     // id = 'base'
@@ -111,23 +111,19 @@ export function afficherCalendriersTrouveesAvecViewText(calendars: any, events: 
 // IMPORT MANUEL //
 export async function importManuel(): Promise<any>{
     try {
-        const files = await DocumentPicker.pick({
-            //type text/calendar
-            type: [DocumentPicker.types.allFiles]
-        });
-        let res: Calendrier[] = [];
-        for (const element of files) {
-            const calendrier = new Calendrier(await convertIcsToJson(element.uri), element.name!, 'blue');
-            res.push(calendrier);
-        }
-        return res;
-    } catch (err) {
-        if (DocumentPicker.isCancel(err)){
-            console.log('Document picker cancelled');
+        const file = await DP.getDocumentAsync({type: 'text/calendar'});
+        let assets = file.assets;
+        if(assets === null)
             return [];
+        let res: Calendrier[] = [];
+        for(const element of assets){
+            const calendrier = new Calendrier(await convertIcsToJson(element.uri), element.name, 'blue');
+            res.push(calendrier);
+            console.log(calendrier);
         }
-        else
-            console.log('Document picker error: ',err);
+        return res;   
+    } catch (err) {
+        console.log('Document picker error: ',err);
     }
 }
 
