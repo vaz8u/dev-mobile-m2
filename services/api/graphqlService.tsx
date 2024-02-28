@@ -1,5 +1,16 @@
 import { useMutation, useQuery, gql } from '@apollo/client';
 
+const LOGIN_USER = gql`
+    mutation Login($loginAccountInput: LoginAccountInput!) {
+        login(loginAccountInput: $loginAccountInput) {
+            account {
+                username
+            }
+            access_token
+        }
+    }
+`;
+
 const CREATE_ACCOUNT = gql`
   mutation CreateAccount($createAccountInput: CreateAccountInput!) {
     createAccount(createAccountInput: $createAccountInput) {
@@ -71,6 +82,10 @@ const DELETE_ALARM = gql`
     deleteAlarm(alarmId: $alarmId)
   }
 `;
+
+export const useLogin = () => {
+    return useMutation(LOGIN_USER);
+}
 
 export const useCreateAccount = () => {
   return useMutation(CREATE_ACCOUNT);
