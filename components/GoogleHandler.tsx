@@ -6,12 +6,16 @@ import { useRouter } from 'expo-router';
  * Redirige vers la page d'accueil */
 async function _signIn(){
     try {
+        GoogleSignin.configure({
+            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+            webClientId: '989732552774-uh9ut9l4e9lgob86abplq2lnbbbaugmc.apps.googleusercontent.com',
+          });
         await GoogleSignin.hasPlayServices();
         const userInfo = await GoogleSignin.signIn();
         console.log(userInfo);
         // navigation
         let navigation = useRouter();
-        navigation.push('/(tabs)/alarmList');
+        navigation.push('/');
     } catch (error: any) {
         console.log(error.code, ' _signIn ',error)
     }
