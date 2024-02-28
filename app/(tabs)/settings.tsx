@@ -1,8 +1,8 @@
 import React from 'react';
-import {  StyleSheet } from 'react-native';
+import {  StyleSheet, View } from 'react-native';
 
-import { View } from '../../components/Themed';
 import { Button } from 'react-native-paper';
+import ThemeChoice from '../../components/ThemeChoice';
 
 export default function TabTwoScreen() {
 
@@ -12,6 +12,7 @@ export default function TabTwoScreen() {
 
     return (
         <View style={styles.container}>
+            <ThemeChoice></ThemeChoice>
             <Button mode="contained" onPress={handleDisconnect} disabled={false}>
                 Se deconnecter
             </Button>
@@ -24,5 +25,5 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-    },
+    }
 });
