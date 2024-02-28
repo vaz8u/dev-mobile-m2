@@ -12,7 +12,6 @@ const ThemeChoice = () => {
     const [checked, setChecked] = useState('Theme 1');
     const { currentTheme, updateTheme } = useThemeContext();
 
-
     const [themeList, setThemeList] = useState<Theme[]>(listeTheme);
 
     const setTheme = (themeName: string) => {

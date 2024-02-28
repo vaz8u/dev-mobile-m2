@@ -1,10 +1,9 @@
 import { StyleSheet } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTheme } from 'react-native-paper';
 
-import Colors from '../../constants/Colors';
 import { Button, Icon, Text } from 'react-native-paper';
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -17,11 +16,12 @@ function TabBarIcon(props: Readonly<{
 }
 export default function TabLayout() {
   const navigation = useRouter();
-  const colorScheme = useColorScheme();
+  const theme = useTheme();
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: theme.colors.primary,
       }}>
        <Tabs.Screen
         name="index"
@@ -30,7 +30,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Icon color={color} source="alarm" size={28}/>,
           headerRight: () => (
             <Button mode="elevated" style={styles.buttonConnexion} onPress={() => navigation.push('/pages/connexion')}>
-              <Text>connexion</Text>
+              <Text>Connexion</Text>
             </Button>
           ),
         }}
