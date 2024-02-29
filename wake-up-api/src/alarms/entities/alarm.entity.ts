@@ -7,26 +7,24 @@ export type AlarmDocument = HydratedDocument<Alarm>;
 @Schema()
 @ObjectType()
 export class Alarm {
-    @Field(() => String)
-    _id: MongooseSchema.Types.ObjectId | string;
+  @Field(() => String)
+  _id: MongooseSchema.Types.ObjectId | string;
 
-    @Prop({ required: true })
-    @Field(() => String)
-    name: string;
+  @Prop({ required: true })
+  @Field(() => String)
+  name: string;
 
-    @Prop({ required: true })
-    @Field(() => String)
-    triggeredDate: string;
+  @Prop({ required: true })
+  @Field(() => String)
+  triggeredDate: string;
 
-    @Prop({ required: true })
-    @Field(() => Boolean)
-    alarmSound: boolean;
+  @Prop({ required: true })
+  @Field(() => Boolean)
+  alarmSound: boolean;
 
-    @Prop({ required: true })
-    @Field(() => Boolean)
-    vibratorSound: boolean;
-
+  @Prop({ required: true })
+  @Field(() => Boolean)
+  vibratorSound: boolean;
 }
 
 export const AlarmSchema = SchemaFactory.createForClass(Alarm);
-

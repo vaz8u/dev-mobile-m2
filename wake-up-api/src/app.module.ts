@@ -26,7 +26,6 @@ import { CacheModule } from '@nestjs/cache-manager';
     MongooseModule.forRoot(process.env.DB_CONNECTION, {
       dbName: `wakeup-${process.env.NODE_ENV}`,
     }),
-
     AccountsModule,
     AlarmsModule,
     AuthModule,
