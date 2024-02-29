@@ -16,4 +16,7 @@ export class UpdateAlarmInput {
 
     @Field(() => Boolean, { nullable: true })
     vibratorSound?: boolean;
+
+    @Field(() => Boolean, { nullable: true })
+    activated?: boolean;
 }

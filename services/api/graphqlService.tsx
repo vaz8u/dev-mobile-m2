@@ -38,6 +38,7 @@ export const GET_ALARMS = gql`
       triggeredDate
       alarmSound
       vibratorSound
+      activated
     }
   }
 `;
@@ -50,6 +51,7 @@ const GET_ALARM = gql`
       triggeredDate
       alarmSound
       vibratorSound
+      activated
     }
   }
 `;
@@ -69,6 +71,32 @@ const UPDATE_ALARM = gql`
 const DELETE_ALARM = gql`
   mutation DeleteAlarm($alarmId: String!) {
     deleteAlarm(alarmId: $alarmId)
+  }
+`;
+
+const ACTIVATE_ALARM = gql`
+  mutation ActivateAlarm($id: String!) {
+    activateAlarm(id: $id) {
+      _id
+      name
+      triggeredDate
+      alarmSound
+      vibratorSound
+      activated
+    }
+  }
+`;
+
+const DEACTIVATE_ALARM = gql`
+  mutation DeactivateAlarm($id: String!) {
+    deactivateAlarm(id: $id) {
+      _id
+      name
+      triggeredDate
+      alarmSound
+      vibratorSound
+      activated
+    }
   }
 `;
 
@@ -103,4 +131,12 @@ export const useUpdateAlarm = () => {
 
 export const useDeleteAlarm = () => {
   return useMutation(DELETE_ALARM);
+};
+
+export const useActivateAlarm = () => {
+  return useMutation(ACTIVATE_ALARM);
+};
+
+export const useDeactivateAlarm = () => {
+  return useMutation(DEACTIVATE_ALARM);
 };

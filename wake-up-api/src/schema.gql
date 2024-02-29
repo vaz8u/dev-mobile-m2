@@ -8,6 +8,7 @@ type Alarm {
   triggeredDate: String!
   alarmSound: Boolean!
   vibratorSound: Boolean!
+  activated: Boolean!
 }
 
 type Account {
@@ -35,6 +36,8 @@ type Mutation {
   createAlarm(alarmInput: CreateAlarmInput!): Alarm!
   updateAlarm(updateAlarmInput: UpdateAlarmInput!): Alarm!
   deleteAlarm(alarmId: String!): Boolean!
+  activateAlarm(id: String!): Alarm!
+  deactivateAlarm(id: String!): Alarm!
   login(loginAccountInput: LoginAccountInput!): LoginResponse!
 }
 
@@ -56,6 +59,7 @@ input CreateAlarmInput {
   triggeredDate: String!
   alarmSound: Boolean!
   vibratorSound: Boolean!
+  activated: Boolean! = true
 }
 
 input UpdateAlarmInput {
@@ -64,6 +68,7 @@ input UpdateAlarmInput {
   triggeredDate: String
   alarmSound: Boolean
   vibratorSound: Boolean
+  activated: Boolean
 }
 
 input LoginAccountInput {

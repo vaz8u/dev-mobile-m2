@@ -26,6 +26,9 @@ export class Alarm {
     @Field(() => Boolean)
     vibratorSound: boolean;
 
+    @Prop({ default: true })
+    @Field(() => Boolean)
+    activated: boolean;
 }
 
 export const AlarmSchema = SchemaFactory.createForClass(Alarm);

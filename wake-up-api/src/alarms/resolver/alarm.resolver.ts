@@ -19,7 +19,7 @@ export class AlarmResolver {
             throw new Error('User not authenticated');
         }
       
-        const alarm = { ...alarmInput };
+        const alarm = { ...alarmInput, activated: true };
           
         // Create the alarm for authenticated user
         return this.alarmsService.create(alarm, user.req.user.username);
@@ -49,4 +49,15 @@ export class AlarmResolver {
         return await this.alarmsService.remove(alarmId);
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Mutation(() => Alarm)
+    async activateAlarm(@Args('id') id: string): Promise<Alarm> {
+        return this.alarmsService.activate(id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Mutation(() => Alarm)
+    async deactivateAlarm(@Args('id') id: string): Promise<Alarm> {
+        return this.alarmsService.deactivate(id);
+    }
 }
