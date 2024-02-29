@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
+import { View } from '../components/Themed';
+
 import { DefaultTheme, useTheme, RadioButton, Text, Switch } from 'react-native-paper';
 import { useThemeContext } from './ThemeContext';
 import { Theme, listeTheme } from '../styles/themeStyle';
@@ -69,7 +71,7 @@ const ThemeChoice = () => {
                 <Text>Dark Mode</Text>
                 <Switch
                     value={isDarkMode}
-                    onValueChange={() => {setIsDarkMode(!isDarkMode); theme.dark = !isDarkMode;}}
+                    onValueChange={() => {setIsDarkMode(!isDarkMode); theme.dark = !isDarkMode; setTheme(checked)}}
                 />
             </View>
             <FlatList

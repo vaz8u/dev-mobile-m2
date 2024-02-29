@@ -153,11 +153,11 @@ const AlarmListScreen = () => {
                 >
                     Supprimer
                 </Button>
-                {/* <Button
+                <Button
                     style={[styles.button, { display: !isPressed ? 'flex' : 'none' }]}
                     icon="plus"
                     onPress={() => { addAlarm(); } } children={undefined} >
-                </Button> */}
+                </Button>
             </View>
         </View>
     );

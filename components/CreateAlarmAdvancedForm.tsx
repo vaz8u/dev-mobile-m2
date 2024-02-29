@@ -1,4 +1,5 @@
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { View } from '../components/Themed';
 import { TextInput, Button, Text } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import InputLocation from './InputLocation';

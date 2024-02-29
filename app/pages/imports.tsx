@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from "react-native";
+import {  StyleSheet } from "react-native";
+import { View } from '../../components/Themed';
 import { List, Button, Text, Snackbar, Searchbar, IconButton, Dialog } from 'react-native-paper';
 import liensEDT from '../../assets/liensEDT.json';
 import * as importsCalendriers from '../../services/ImportsCalendrier';

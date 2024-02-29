@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { TextInput, StyleSheet } from 'react-native';
+import { View } from '../components/Themed';
 
 import { useForm, Controller } from 'react-hook-form';
 import { LocationObject } from 'expo-location';

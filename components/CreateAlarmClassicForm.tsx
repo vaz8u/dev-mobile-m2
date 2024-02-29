@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { View } from '../components/Themed';
 import { Button, TextInput, Text } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import InputTimePicker from './InputTimePicker';
