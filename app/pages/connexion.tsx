@@ -1,22 +1,22 @@
 // page de connexion 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { Button, TextInput } from 'react-native-paper';
 import { GRAPHQL_URI, expo_go } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PageContext } from '../../services/api/apolloClient';
+import { useLogin } from '../../services/api/graphqlService';
 
-
-type Props = {
-    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
-};
-
-export default function ConnexionScreen(props: Readonly<Props>) {
+export default function ConnexionScreen() {
+    const setIsLogged = useContext(PageContext);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [login] = useLogin();
 
   const fetchTokenDynamically = async (username:string, password:string) => {
+    // TODO use useLogin()
     const response = await fetch(GRAPHQL_URI, {
       method: 'POST',
       headers: {
@@ -58,7 +58,7 @@ export default function ConnexionScreen(props: Readonly<Props>) {
 
   const handleLogin = () => {
     fetchTokenDynamically(email, password).then(res => {
-        props.setIsLoggedIn(true);
+        setIsLogged(true);
     }).catch(err => {
         setErrorMessage(err.message)
     });

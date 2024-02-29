@@ -14,6 +14,7 @@ const AlarmListScreen = () => {
     const [alarmList, setAlarmList] = useState<AlarmListInterface[]>([]);
     const [deleteAlarm] = useDeleteAlarm();
     const { data, refetch } = useGetAlarms();
+    
     useEffect(() => {
         const fetchAlarms = () => {
             refetch().then((alarmsData) => {
