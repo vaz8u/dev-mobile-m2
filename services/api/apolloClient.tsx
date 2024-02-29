@@ -14,6 +14,7 @@ export const PageContext= React.createContext(retest);
 export const authLink = setContext(async (_, { headers }) => {
     try {
       const token = await AsyncStorage.getItem("token");
+      console.log(token);
   
       return {
         headers: {

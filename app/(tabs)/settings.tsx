@@ -6,6 +6,8 @@ import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import client, { PageContext } from '../../services/api/apolloClient';
 import { LOGOUT_USER } from '../../services/api/graphqlService';
 import { useLazyQuery } from '@apollo/client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function TabTwoScreen() {
     const setIsLogged = useContext(PageContext);
@@ -17,8 +19,11 @@ export default function TabTwoScreen() {
 
     const handleDisconnect = async () => {
         logout().then(value => {
-            client.clearStore()
-            setIsLogged(false);
+            AsyncStorage.removeItem("token").then(() => {
+                client.clearStore().then(value => {
+                    setIsLogged(false);
+                });
+            })
         }).catch(err => {
             setErrorMessage(err.message);
         });
