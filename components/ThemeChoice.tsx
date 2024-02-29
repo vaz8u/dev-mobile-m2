@@ -111,18 +111,15 @@ const styles = StyleSheet.create({
   view1: {
     flex: 1,
     margin: 5,
-    padding: 10
+    padding: 10,
+    borderRadius: 5
   },
   view2: {
     flex: 0.6,
     margin: 5,
-    padding: 10
-  },
-  view3: {
-    flex: 0.3,
-    margin: 5,
-    padding: 10
-  },
+    padding: 10,
+    borderRadius: 5
+  }
 });
 
 export default ThemeChoice;

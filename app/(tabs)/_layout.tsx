@@ -22,12 +22,20 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: theme.colors.primary,
+        tabBarActiveBackgroundColor: theme.colors.onPrimary,
+        tabBarInactiveBackgroundColor: theme.colors.background,
       }}>
        <Tabs.Screen
         name="index"
         options={{
           title: 'Alarmes',
           tabBarIcon: ({ color }) => <Icon color={color} source="alarm" size={28}/>,
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
           headerRight: () => (
             <Button mode="elevated" style={styles.buttonConnexion} onPress={() => navigation.push('/pages/connexion')}>
               <Text>Connexion</Text>
@@ -39,6 +47,12 @@ export default function TabLayout() {
         name="calendar"
         options={{
           title: 'Calendrier',
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
           tabBarIcon: ({ color }) => <Icon color={color} source="calendar" size={28}/>,
         }}
       />
@@ -46,6 +60,12 @@ export default function TabLayout() {
         name="createAlarms"
         options={{
           href: null,
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
           title: 'Mes alarmes > Créer'
         }}
       />
@@ -53,6 +73,12 @@ export default function TabLayout() {
         name="viewAlarm"
         options={{
           href: null,
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
           title: 'Mes alarmes > Alarme'
         }}
       />
@@ -60,6 +86,12 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: 'Paramètres',
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
           tabBarIcon: ({ color }) => <Icon color={color} source="cog" size={28}/>,
         }}
       />
