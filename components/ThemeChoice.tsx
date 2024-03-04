@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, FlatList } from 'react-native';
 import { View } from '../components/Themed';
 
-import { DefaultTheme, useTheme, RadioButton, Text, Switch } from 'react-native-paper';
+import { DefaultTheme, useTheme, RadioButton, Text, Switch, Icon } from 'react-native-paper';
 import { useThemeContext } from './ThemeContext';
 import { Theme, listeTheme } from '../styles/themeStyle';
 
@@ -59,6 +59,9 @@ const ThemeChoice = () => {
                 <View style={[styles.view2, { backgroundColor: !theme.dark? item.light['secondary'] : item.dark['secondary'] }]}>
                     <Text> </Text>
                 </View>
+                <View style={[styles.view3, { backgroundColor: !theme.dark? item.light['tertiary'] : item.dark['tertiary'] }]}>
+                    <Text> </Text>
+                </View>
             </View>
         </View>
       );
@@ -68,11 +71,13 @@ const ThemeChoice = () => {
     return (
         <View style={styles.container}>
             <View style={styles.switchContainer}>
-                <Text>Dark Mode</Text>
+                <Text style={[{marginHorizontal: 10}]}>Dark Mode</Text>
+                <Icon source="white-balance-sunny" color={theme.dark? 'gray':'darkorange'} size={30}></Icon>
                 <Switch
                     value={isDarkMode}
                     onValueChange={() => {setIsDarkMode(!isDarkMode); theme.dark = !isDarkMode; setTheme(checked)}}
                 />
+                <Icon source="moon-waxing-crescent" color={theme.dark? 'yellow':'gray'} size={30}></Icon>
             </View>
             <FlatList
                 data={themeList}
@@ -92,10 +97,9 @@ const styles = StyleSheet.create({
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     marginHorizontal: 20,
     marginTop: 10,
-    },
+  },
   themeChoice:{
     flexDirection: 'row',
     alignItems: "center",
@@ -119,6 +123,15 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 10,
     borderRadius: 5
+  },
+  view3: {
+    flex: 0.4,
+    margin: 5,
+    padding: 10,
+    borderRadius: 5
+  },
+  darkMode:{
+    backgroundColor: "red",
   }
 });
 
