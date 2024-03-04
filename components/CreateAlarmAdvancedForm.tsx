@@ -145,7 +145,6 @@ export default AdvancedAlarmForm;
 const styles = StyleSheet.create({
     scene: {
         flex: 1,
-        backgroundColor:'white',
         padding:10
       },
     row: {

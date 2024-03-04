@@ -85,7 +85,7 @@ const InteractiveCalendar = () => {
       <ViewRN >
         <Calendar key={themeKey} onDayPress={handleDayPress} markedDates={markedDates}
           theme={{
-            calendarBackground: theme.colors.background,
+            calendarBackground: theme.colors.surfaceVariant,
             todayTextColor: theme.colors.primary,
             dayTextColor: theme.colors.onBackground,
             arrowColor: theme.colors.primary,

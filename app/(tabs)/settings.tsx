@@ -14,7 +14,7 @@ export default function TabTwoScreen() {
     return (
         <View style={styles.container}>
             <ThemeChoice></ThemeChoice>
-            <Button mode="contained" onPress={handleDisconnect} disabled={false}>
+            <Button style={[{margin: 10}]} mode="contained" onPress={handleDisconnect} disabled={false}>
                 Se deconnecter
             </Button>
         </View>

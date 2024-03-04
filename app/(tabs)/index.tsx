@@ -16,7 +16,7 @@ export default function TabOneScreen() {
         <View style={styles.buttonContainer}>
           <Button
               style={styles.button}
-              mode="elevated"
+              mode="contained"
               icon="plus"
               onPress={() => navigation.push('/(tabs)/createAlarms') } children={undefined} >
           </Button>

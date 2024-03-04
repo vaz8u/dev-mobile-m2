@@ -22,7 +22,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarActiveBackgroundColor: theme.colors.onPrimary,
+        tabBarActiveBackgroundColor: theme.colors.background,
         tabBarInactiveBackgroundColor: theme.colors.background,
       }}>
        <Tabs.Screen
@@ -37,8 +37,8 @@ export default function TabLayout() {
             color: theme.colors.onBackground,
           },
           headerRight: () => (
-            <Button mode="elevated" style={styles.buttonConnexion} onPress={() => navigation.push('/pages/connexion')}>
-              <Text>Connexion</Text>
+            <Button mode="contained"  style={styles.buttonConnexion} onPress={() => navigation.push('/pages/connexion')}>
+              Connexion
             </Button>
           ),
         }}

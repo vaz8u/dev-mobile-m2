@@ -11,7 +11,7 @@ import { Theme, listeTheme } from '../styles/themeStyle';
 const ThemeChoice = () => {
     const theme = useTheme();
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [checked, setChecked] = useState('Theme 1');
+    const [checked, setChecked] = useState("Orchidée");
     const { currentTheme, updateTheme } = useThemeContext();
 
     const [themeList, setThemeList] = useState<Theme[]>(listeTheme);
@@ -119,19 +119,16 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   view2: {
-    flex: 0.6,
-    margin: 5,
-    padding: 10,
-    borderRadius: 5
-  },
-  view3: {
     flex: 0.4,
     margin: 5,
     padding: 10,
     borderRadius: 5
   },
-  darkMode:{
-    backgroundColor: "red",
+  view3: {
+    flex: 0.1,
+    margin: 5,
+    padding: 10,
+    borderRadius: 5
   }
 });
 
