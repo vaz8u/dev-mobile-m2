@@ -1,5 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View } from '../components/Themed';
+
 import { List, Switch } from 'react-native-paper';
 
 interface ParamProps {

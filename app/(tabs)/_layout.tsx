@@ -1,9 +1,10 @@
+import { StyleSheet } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable, useColorScheme } from 'react-native';
+import { Tabs } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { useTheme } from 'react-native-paper';
 
-import Colors from '../../constants/Colors';
-import { Icon } from 'react-native-paper';
+import { Button, Icon, Text } from 'react-native-paper';
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
@@ -14,37 +15,44 @@ function TabBarIcon(props: Readonly<{
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const navigation = useRouter();
+  const theme = useTheme();
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarActiveBackgroundColor: theme.colors.background,
+        tabBarInactiveBackgroundColor: theme.colors.background,
       }}>
        <Tabs.Screen
         name="index"
         options={{
           title: 'Alarmes',
           tabBarIcon: ({ color }) => <Icon color={color} source="alarm" size={28}/>,
-          // headerRight: () => (
-          //   <Link href="/modal" asChild>
-          //     <Pressable>
-          //       {({ pressed }) => (
-          //         <FontAwesome
-          //           name="info-circle"
-          //           size={25}
-          //           color={Colors[colorScheme ?? 'light'].text}
-          //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-          //         />
-          //       )}
-          //     </Pressable>
-          //   </Link>
-          // ),
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
+          headerRight: () => (
+            <Button mode="contained"  style={styles.buttonConnexion} onPress={() => navigation.push('/pages/connexion')}>
+              Connexion
+            </Button>
+          ),
         }}
       />
       <Tabs.Screen
         name="calendar"
         options={{
           title: 'Calendrier',
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
           tabBarIcon: ({ color }) => <Icon color={color} source="calendar" size={28}/>,
         }}
       />
@@ -52,6 +60,12 @@ export default function TabLayout() {
         name="createAlarms"
         options={{
           href: null,
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
           title: 'Mes alarmes > Créer'
         }}
       />
@@ -59,6 +73,12 @@ export default function TabLayout() {
         name="viewAlarm"
         options={{
           href: null,
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
           title: 'Mes alarmes > Alarme'
         }}
       />
@@ -66,6 +86,12 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: 'Paramètres',
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTitleStyle: {
+            color: theme.colors.onBackground,
+          },
           tabBarIcon: ({ color }) => <Icon color={color} source="cog" size={28}/>,
         }}
       />
@@ -73,3 +99,9 @@ export default function TabLayout() {
     
   );
 }
+
+const styles = StyleSheet.create({
+  buttonConnexion:{
+    margin: 5
+  }
+});

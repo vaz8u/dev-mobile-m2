@@ -73,4 +73,30 @@ export class AlarmsService {
 
     return true;
   }
+
+  async activate(alarmId: string): Promise<Alarm> {
+    const existingAlarm = await this.findOne(alarmId);
+
+    if (!existingAlarm) {
+      return null;
+    }
+
+    existingAlarm.activated = true;
+
+    const updatedAlarm = await (existingAlarm as AlarmDocument).save();
+    return updatedAlarm;
+  }
+
+  async deactivate(alarmId: string): Promise<Alarm> {
+    const existingAlarm = await this.findOne(alarmId);
+
+    if (!existingAlarm) {
+      return null;
+    }
+
+    existingAlarm.activated = false;
+
+    const updatedAlarm = await (existingAlarm as AlarmDocument).save();
+    return updatedAlarm;
+  }
 }

@@ -4,6 +4,7 @@
  */
 
 import { Text as DefaultText, useColorScheme, View as DefaultView } from "react-native";
+import { useTheme } from "react-native-paper";
 
 import Colors from "../constants/Colors";
 import React from "react";
@@ -37,9 +38,17 @@ export function Text(props: TextProps) {
   return <DefaultText style={[{ color }, style]} {...otherProps} />;
 }
 
+// export function View(props: ViewProps) {
+//   const { style, lightColor, darkColor, ...otherProps } = props;
+//   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, "background");
+
+//   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+// }
+
 export function View(props: ViewProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, "background");
+  const theme = useTheme(); 
+  const backgroundColor = lightColor && darkColor ? (theme.dark ? darkColor : lightColor) : theme.colors.surfaceVariant; 
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
 }

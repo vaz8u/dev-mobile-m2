@@ -1,10 +1,7 @@
 import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
 import { CreateAlarmInput } from '../dto/create-alarm.input';
-import { UpdateAlarmInput } from '../dto/update-alarm.input';
 import { Alarm } from '../entities/alarm.entity';
 import { AlarmsService } from '../alarms.service';
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Resolver(() => Alarm)
 export class AlarmResolver {
@@ -19,7 +16,7 @@ export class AlarmResolver {
       throw new Error('User not authenticated');
     }
 
-    const alarm = { ...alarmInput };
+    const alarm = { ...alarmInput, activated: true };
 
     // Create the alarm for authenticated user
     return this.alarmsService.create(alarm, user.req.user.username);
@@ -43,5 +40,15 @@ export class AlarmResolver {
   @Mutation(() => Boolean)
   async deleteAlarm(@Args('alarmId') alarmId: string): Promise<boolean> {
     return await this.alarmsService.remove(alarmId);
+  }
+
+  @Mutation(() => Alarm)
+  async activateAlarm(@Args('id') id: string): Promise<Alarm> {
+    return this.alarmsService.activate(id);
+  }
+
+  @Mutation(() => Alarm)
+  async deactivateAlarm(@Args('id') id: string): Promise<Alarm> {
+    return this.alarmsService.deactivate(id);
   }
 }

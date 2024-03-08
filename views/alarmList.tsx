@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { View } from '../components/Themed';
 import AlarmList, {AlarmListInterface, Day} from '../components/AlarmList';
@@ -23,7 +23,7 @@ const AlarmListScreen = () => {
                 _id: alarm._id,
                 title: alarm.name,
                 description: alarm.triggeredDate,
-                enable: true,
+                enable: alarm.activated,
                 selected: false,
                 day: Day.Mercredi,
               }));
@@ -141,22 +141,24 @@ const AlarmListScreen = () => {
             </View>
             <View style={styles.buttonContainer}>
                 <Button
+                    mode="elevated"
                     style={[styles.button, { display: isPressed ? 'flex' : 'none' }]}
                     onPress={() => { cancelSelection(); }} 
                 >
                     Annuler
                 </Button>
                 <Button
+                    mode="elevated"
                     style={[styles.button, { display: isPressed ? 'flex' : 'none' }]}
                     onPress={() => { deleteSelection(); }} 
                 >
                     Supprimer
                 </Button>
-                <Button
+                {/* <Button
                     style={[styles.button, { display: !isPressed ? 'flex' : 'none' }]}
                     icon="plus"
                     onPress={() => { addAlarm(); } } children={undefined} >
-                </Button>
+                </Button> */}
             </View>
         </View>
     );
@@ -179,7 +181,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     button:{
-        backgroundColor:'#F7F2FA',
         margin: 10,
     }
 });

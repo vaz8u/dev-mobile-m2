@@ -1,9 +1,12 @@
 import { StyleSheet } from 'react-native';
 import InteractiveCalendar from '../../components/InteractiveCalendar';
+import { View } from '../../components/Themed';
 
 export default function CalendarScreen() {
   return (
+    <View>
     <InteractiveCalendar></InteractiveCalendar>
+    </View>
   );
 }
 
