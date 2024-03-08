@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { View } from '../components/Themed';
+
 import { TextInput, Button } from 'react-native-paper';
 import { Noop } from 'react-hook-form';
 import GeolocationService from '../services/GeolocationService';

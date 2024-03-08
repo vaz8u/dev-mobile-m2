@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { TabBar, TabView } from 'react-native-tab-view';
 import AdvancedAlarmForm from '../../components/CreateAlarmAdvancedForm';
 import ClassicAlarmForm from '../../components/CreateAlarmClassicForm';
+import { useTheme } from 'react-native-paper';
 
 interface Route {
   key: string;
@@ -12,6 +13,7 @@ interface Route {
 const initialLayout = { width: 300 };
 export default function CreateAlarmsScreen() {
     const [index, setIndex] = useState(0);
+    const theme = useTheme();
     const [routes] = useState([
       { key: 'advanced', title: 'Avancé' },
       { key: 'classic', title: 'Classique' },
@@ -35,6 +37,8 @@ export default function CreateAlarmsScreen() {
       renderTabBar={(props) => (
         <TabBar
           {...props}
+          style={{ backgroundColor: theme.colors.primary}}
+          indicatorStyle={{ backgroundColor: theme.colors.primaryContainer }}
         />
       )}
     />

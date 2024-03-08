@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import {  StyleSheet, Appearance, Linking } from 'react-native';
 import { View } from '../../components/Themed';
-import { Button, List, Switch } from 'react-native-paper';
+import { Badge, Button, List, Switch, TextInput } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
+
+import ThemeChoice from '../../components/ThemeChoice';
 
 export default function TabTwoScreen() {
     const handleDisconnect = () => {
@@ -53,12 +55,12 @@ export default function TabTwoScreen() {
                     description="user"
                     left={() => <List.Icon style={styles.icon} icon="account" />}
                 />
-                <List.Item
-                    title="Dark mode"
-                    description="Activer le mode sombre"
-                    left={() => <List.Icon style={styles.icon} icon="brightness-4" />}
-                    right={() => <Switch value={isSwitchOn} onValueChange={onToggleSwitch}  />}
-                />
+                <List.Accordion
+                    title="Thèmes"
+                    left={() => <List.Icon style={styles.icon} icon="palette" />}
+                >
+                    <ThemeChoice />
+                </List.Accordion>
                 <List.Accordion
                     title="Autorisations"
                     left={() => <List.Icon style={styles.icon} icon="lock" />}
