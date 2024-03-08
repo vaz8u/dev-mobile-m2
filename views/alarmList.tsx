@@ -14,6 +14,7 @@ const AlarmListScreen = () => {
     const [alarmList, setAlarmList] = useState<AlarmListInterface[]>([]);
     const [deleteAlarm] = useDeleteAlarm();
     const { data, refetch } = useGetAlarms();
+    
     useEffect(() => {
         const fetchAlarms = () => {
             refetch().then((alarmsData) => {
@@ -22,7 +23,7 @@ const AlarmListScreen = () => {
                 _id: alarm._id,
                 title: alarm.name,
                 description: alarm.triggeredDate,
-                enable: true,
+                enable: alarm.activated,
                 selected: false,
                 day: Day.Mercredi,
               }));

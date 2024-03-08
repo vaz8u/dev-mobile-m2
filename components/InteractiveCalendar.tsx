@@ -26,16 +26,17 @@ const InteractiveCalendar = () => {
     const fetchAlarms = () => {
       refetch().then((alarmsData) => {
         const fetchedAlarms = alarmsData?.data?.alarms || [];
-        const updatedList = fetchedAlarms.reduce((acc: { [x: string]: { time: string; description: any; }[]; }, alarm: { triggeredDate: string; name: string; }) => {
-        const parsedDate = parseAlarmDate(alarm.triggeredDate);
-              
-        if (acc[parsedDate]) {
-          acc[parsedDate].push({ time: parseAlarmTime(alarm.triggeredDate), description: alarm.name });
-        } else {
-          acc[parsedDate] = [{ time: parseAlarmTime(alarm.triggeredDate), description: alarm.name }];
-        }
+        const updatedList = fetchedAlarms.reduce((acc: { [x: string]: { time: string; description: any }[]; }, alarm: { triggeredDate: string; name: string; activated:boolean;}) => {
+          if(!alarm.activated) return acc;
+          const parsedDate = parseAlarmDate(alarm.triggeredDate);
                 
-        return acc;
+          if (acc[parsedDate]) {
+            acc[parsedDate].push({ time: parseAlarmTime(alarm.triggeredDate), description: alarm.name });
+          } else {
+            acc[parsedDate] = [{ time: parseAlarmTime(alarm.triggeredDate), description: alarm.name }];
+          }
+                  
+          return acc;
       }, {} as Alarms);
       setAlarms(updatedList);
       }).catch((error) => {

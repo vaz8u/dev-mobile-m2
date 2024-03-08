@@ -13,4 +13,7 @@ export class CreateAlarmInput {
 
     @Field(() => Boolean)
     vibratorSound: boolean;
+
+    @Field(() => Boolean, { defaultValue: true })
+    activated: boolean;
 }
