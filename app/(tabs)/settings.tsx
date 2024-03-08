@@ -1,20 +1,26 @@
-import React, { useContext, useState } from 'react';
-import {  StyleSheet } from 'react-native';
-
-import { View } from '../../components/Themed';
-import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import client, { PageContext } from '../../services/api/apolloClient';
 import { LOGOUT_USER } from '../../services/api/graphqlService';
 import { useLazyQuery } from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import React, { useContext, useState } from 'react';
+import {  StyleSheet, Appearance, Linking } from 'react-native';
+import { View } from '../../components/Themed';
+import { ActivityIndicator, Button, Text, List } from 'react-native-paper';
+import * as Notifications from 'expo-notifications';
+import * as Location from 'expo-location';
+import ThemeChoice from '../../components/ThemeChoice';
 
 
 export default function TabTwoScreen() {
     const setIsLogged = useContext(PageContext);
     const [errorMessage, setErrorMessage] = useState('');
     const [logout, { loading, error }] = useLazyQuery(LOGOUT_USER);
+    const [isSwitchOn, setIsSwitchOn] = useState(Appearance.getColorScheme() === 'dark' ? true : false);
+    const [localisationAutorisee, setLocalisationAutorisee] = useState(false);
+    const [notificationsAutorisees, setNotificationsAutorisees] = useState(false);
 
-    if (loading) return <ActivityIndicator />;
+    if (loading) return (<ActivityIndicator />);
     if (error) setErrorMessage(error.message);
 
     const handleDisconnect = async () => {
@@ -30,7 +36,6 @@ export default function TabTwoScreen() {
     };
 
     // Switch du dark mode
-    const [isSwitchOn, setIsSwitchOn] = React.useState(Appearance.getColorScheme() === 'dark' ? true : false);
     const onToggleSwitch = () => {
         setIsSwitchOn(!isSwitchOn);
         if(isSwitchOn)
@@ -38,9 +43,6 @@ export default function TabTwoScreen() {
         else
             Appearance.setColorScheme('dark');
     };
-
-    const [localisationAutorisee, setLocalisationAutorisee] = useState(false);
-    const [notificationsAutorisees, setNotificationsAutorisees] = useState(false);
 
     const checkAutorisations = async () => {
         const { status } = await Notifications.getPermissionsAsync();

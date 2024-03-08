@@ -2,6 +2,7 @@ import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
 import { CreateAlarmInput } from '../dto/create-alarm.input';
 import { Alarm } from '../entities/alarm.entity';
 import { AlarmsService } from '../alarms.service';
+import { UpdateAlarmInput } from '../dto/update-alarm.input';
 
 @Resolver(() => Alarm)
 export class AlarmResolver {
