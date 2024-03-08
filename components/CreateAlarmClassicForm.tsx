@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { View, Text, StyleSheet } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { View } from '../components/Themed';
+import { Button, TextInput, Text } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import InputTimePicker from './InputTimePicker';
 import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.input';
@@ -136,7 +137,6 @@ export default ClassicAlarmForm;
 const styles = StyleSheet.create({
     scene: {
         flex: 1,
-        backgroundColor:'white',
         padding:10
       },
     row: {

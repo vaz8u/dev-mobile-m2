@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { View } from '../components/Themed';
+import { TextInput, Button, Text } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import InputLocation from './InputLocation';
 import InputTimePicker from './InputTimePicker';
@@ -144,7 +145,6 @@ export default AdvancedAlarmForm;
 const styles = StyleSheet.create({
     scene: {
         flex: 1,
-        backgroundColor:'white',
         padding:10
       },
     row: {

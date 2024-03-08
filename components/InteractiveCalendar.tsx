@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, View as ViewRN } from 'react-native';
+import { View } from '../components/Themed';
+import { Text, useTheme } from 'react-native-paper';
 import { Calendar } from 'react-native-calendars';
 import { useGetAlarms } from '../services/api/graphqlService';
 import { parseAlarmDate, parseAlarmTime } from '../services/DateParserService';
@@ -15,6 +17,9 @@ interface Alarms {
 const InteractiveCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [alarms, setAlarms] = useState<Alarms>({});
+  const theme = useTheme();
+  const [themeKey, setThemeKey] = useState(0);
+
 
   const { data, refetch } = useGetAlarms();
   useEffect(() => {
@@ -38,8 +43,14 @@ const InteractiveCalendar = () => {
       });
     };
     fetchAlarms();
+    
   }, [data]);
-      
+
+  useEffect(() => {
+    // Mettez à jour la clé du thème pour forcer le rendu du calendrier lorsqu'il y a un changement de thème
+    setThemeKey((prevKey: number) => prevKey + 1);
+  }, [theme]);
+
   const handleDayPress = (day: any) => {
     setSelectedDate(day.dateString);
   };
@@ -70,9 +81,21 @@ const InteractiveCalendar = () => {
   }, {} as Record<string, { selected:boolean; marked: boolean }>);
   
   return (
-    <View>
-      <Calendar onDayPress={handleDayPress} markedDates={markedDates}/>
-      {renderAlarms()}
+    <View >
+      <ViewRN >
+        <Calendar key={themeKey} onDayPress={handleDayPress} markedDates={markedDates}
+          theme={{
+            calendarBackground: theme.colors.surfaceVariant,
+            todayTextColor: theme.colors.primary,
+            dayTextColor: theme.colors.onBackground,
+            arrowColor: theme.colors.primary,
+            monthTextColor: theme.colors.onBackground
+          }}
+        />
+        <View style={styles.renderAlarms}>
+          {renderAlarms()}
+        </View>
+      </ViewRN>
     </View>
   );
 };
@@ -84,9 +107,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  renderAlarms:{
+    height: "100%"
+  },
   noAlarmText: {
     fontSize: 18,
-    color: 'white',
     textAlign: 'center',
   },
   alarmContainer: {
@@ -104,8 +129,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color:'white'
   },
-    text:{
-        color:'white',
-        backgroundColor:'red'
-    }
-  });
+  text:{
+      color:'white',
+      backgroundColor:'red'
+  }
+});
