@@ -42,14 +42,14 @@ const ThemeChoice = () => {
 
 
     const itemThemeChoice = ({ item, index }: { item: Theme, index: number }) => (
-        <View style={styles.themeChoice}>
+        <View style={styles.themeChoice}
+              onTouchEnd={() => {
+                setChecked(item.name);
+                setTheme(item.name);
+              }}>
             <RadioButton 
                 value={item.name}
                 status={ checked === item.name ? 'checked' : 'unchecked' }
-                onPress={() => {
-                    setChecked(item.name);
-                    setTheme(item.name);
-                }}
             />
             <Text style={[styles.text]}>{item.name}</Text>
             <View style={styles.colors}>
@@ -90,20 +90,20 @@ const ThemeChoice = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: 'column',
     width: '100%',
   },
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 20,
     marginTop: 10,
+    marginBottom: 10,
   },
   themeChoice:{
     flexDirection: 'row',
     alignItems: "center",
-    margin: 20
+    borderTopWidth: 1,
+    borderColor: 'lightgray',
   },
   text:{
     flex:1,
