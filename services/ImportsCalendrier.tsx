@@ -65,13 +65,16 @@ export function creerElementsCalendrierFromJson(json: any): Evenement[] {
 
 // Retourne les calendriers détectés dans le téléphone sous forme de liste de string
 export async function getCalendriers(): Promise<any>{
-    await RNCalendarEvents.requestPermissions();
+    let requete = await RNCalendarEvents.requestPermissions();
+    if(requete !== 'authorized')
+        return [requete];
     if(await RNCalendarEvents.checkPermissions()){
         let calendars = await RNCalendarEvents.findCalendars();
         let events = await RNCalendarEvents.fetchAllEvents(new Date().toISOString(), new Date(2024, 12, 31).toISOString());
         afficherCalendriersTrouvees(calendars, events); // DEBUG
         return calendars.map((calendar: any) => calendar.title); 
     }
+    return [];
 }
 
 // Ajoute le calendrier à la liste des calendriers de l'utilisateur

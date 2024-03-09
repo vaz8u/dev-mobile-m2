@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  StyleSheet } from "react-native";
+import {  Linking, StyleSheet } from "react-native";
 import { View } from '../../components/Themed';
 import { List, Button, Text, Snackbar, Searchbar, IconButton, Dialog } from 'react-native-paper';
 import liensEDT from '../../assets/liensEDT.json';
@@ -110,6 +110,17 @@ export default function App() {
       </Button>);
     }
 
+    const [AuthcalendriersTelephone, setAuthcalendriersTelephone] = useState(true);
+
+    async function setCalendrierTelephone() {
+      const newLiens = await importsCalendriers.getCalendriers();
+      setLiens(newLiens);
+      if(newLiens[0] == 'denied'){
+        setAuthcalendriersTelephone(false);
+      }
+    }
+    
+
     return (
         <View>
           <Text style={styles.titre}>Options d'importation d'emploi du temps</Text>
@@ -142,20 +153,34 @@ export default function App() {
               id="Calendriers du téléphone"
               title="Calendriers du téléphone"
             >
-                <Button
-                  mode="contained-tonal"
-                  style={styles.button_center}
-                  onPress={async () => {
-                    setLiens([]);
-                    setLoading(loading => !loading);
-                    setLiens(await importsCalendriers.getCalendriers());
-                    setLoading(loading => !loading);
-                  }}
-                  loading={loading}
-                >
-                  Détecter les calendriers
-                </Button>
-                {liens.length === 0 && !loading ?(
+                {AuthcalendriersTelephone ? (
+                  <Button
+                    mode="contained-tonal"
+                    style={styles.button_center}
+                    onPress={async () => {
+                      setLiens([]);
+                      setLoading(loading => !loading);
+                      await setCalendrierTelephone();
+                      setLoading(loading => !loading);
+                    }}
+                    loading={loading}
+                  >
+                    Détecter les calendriers
+                  </Button>
+                ) : (
+                  <Button
+                    mode="contained-tonal"
+                    style={styles.button_center}
+                    onPress={async () => {
+                      setLiens([]);
+                      Linking.openSettings();
+                      await setCalendrierTelephone();
+                    }}
+                  >
+                    Autoriser l'accès aux calendriers
+                  </Button>
+                )}
+                {(liens.length === 0 || liens[0] == 'denied') && !loading ?(
                 <Text style={styles.text}>La liste est vide</Text>
               ) : (
                 liens.map((subItem) => (
