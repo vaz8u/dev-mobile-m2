@@ -1,8 +1,7 @@
-name: Build & Publish Release APK
+name: Build & Publish APK
 on: 
-  push:
-    tags:
-      - '*'
+    pull_request:
+        branches: [ develop ]
 jobs:
   build:
     runs-on: ubuntu-latest
