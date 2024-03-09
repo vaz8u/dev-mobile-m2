@@ -8,19 +8,19 @@ export type AccountDocument = HydratedDocument<Account>;
 @Schema()
 @ObjectType()
 export class Account {
-    @Field(() => String)
-    _id: MongooseSchema.Types.ObjectId | string;
+  @Field(() => String)
+  _id: MongooseSchema.Types.ObjectId | string;
 
-    @Prop({ required: true })
-    @Field(() => String)
-    username: string;
+  @Prop({ required: true })
+  @Field(() => String)
+  username: string;
 
-    @Prop({ required: true })
-    password: string;
+  @Prop({ required: true })
+  password: string;
 
-    @Field(() => [Alarm], { nullable: true })
-    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Alarm' }] })
-    alarms?: Types.ObjectId[];
+  @Field(() => [Alarm], { nullable: true })
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Alarm' }] })
+  alarms?: Types.ObjectId[];
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);

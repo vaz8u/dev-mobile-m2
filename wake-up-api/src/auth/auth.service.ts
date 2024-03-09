@@ -12,11 +12,10 @@ export type ExcludePasswordAccount = Omit<Account, 'password'>;
 
 @Injectable()
 export class AuthService {
-  private readonly blackList: string[] = [];
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private accountsService: AccountsService,
     private jwtService: JwtService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
@@ -43,7 +42,6 @@ export class AuthService {
 
   async logout(jwt: string): Promise<void> {
     const payload = this.jwtService.decode(jwt);
-
     const currentTimestamp = Math.floor(Date.now() / 1000);
     const timeToLive = payload.exp - currentTimestamp;
 

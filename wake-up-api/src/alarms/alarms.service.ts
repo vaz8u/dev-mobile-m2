@@ -8,82 +8,95 @@ import { UpdateAlarmInput } from './dto/update-alarm.input';
 
 @Injectable()
 export class AlarmsService {
-    constructor(@InjectModel(Alarm.name) private alarmModel: Model<Alarm>,
-    private readonly accountsService: AccountsService) {}
+  constructor(
+    @InjectModel(Alarm.name) private alarmModel: Model<Alarm>,
+    private readonly accountsService: AccountsService,
+  ) {}
 
-    async create(createAlarmInput: CreateAlarmInput, userId: string): Promise<Alarm> {
-        const newAlarm = new this.alarmModel({ ...createAlarmInput });
-        const savedAlarm = await newAlarm.save();
+  async create(
+    createAlarmInput: CreateAlarmInput,
+    userId: string,
+  ): Promise<Alarm> {
+    const newAlarm = new this.alarmModel({ ...createAlarmInput });
+    const savedAlarm = await newAlarm.save();
 
-        const user = await this.accountsService.findOne(userId);
+    const user = await this.accountsService.findOne(userId);
 
-        this.accountsService.addAlarmToAccount(user.username,savedAlarm.id);
-        return savedAlarm;
+    this.accountsService.addAlarmToAccount(user.username, savedAlarm.id);
+    return savedAlarm;
+  }
+
+  async findAll(): Promise<Alarm[]> {
+    return await this.alarmModel.find().exec();
+  }
+
+  async findOne(alarmId: string): Promise<Alarm> {
+    return await this.alarmModel.findById(alarmId).exec();
+  }
+
+  async update(
+    alarmId: string,
+    updateAlarmInput: UpdateAlarmInput,
+  ): Promise<Alarm> {
+    const existingAlarm = await this.findOne(alarmId);
+
+    if (!existingAlarm) {
+      return null;
     }
 
-    async findAll(): Promise<Alarm[]> {
-        return await this.alarmModel.find().exec();
+    existingAlarm.name = updateAlarmInput.name ?? existingAlarm.name;
+    existingAlarm.triggeredDate =
+      updateAlarmInput.triggeredDate ?? existingAlarm.triggeredDate;
+    existingAlarm.alarmSound =
+      updateAlarmInput.alarmSound ?? existingAlarm.alarmSound;
+    existingAlarm.vibratorSound =
+      updateAlarmInput.vibratorSound ?? existingAlarm.vibratorSound;
+
+    const updatedAlarm = await (existingAlarm as AlarmDocument).save();
+    return updatedAlarm;
+  }
+
+  async remove(alarmId: string): Promise<boolean> {
+    const deleteResult = await this.alarmModel
+      .findByIdAndDelete(alarmId)
+      .exec();
+
+    if (!deleteResult) {
+      return false;
     }
 
-    async findOne(alarmId: string): Promise<Alarm> {
-        return await this.alarmModel.findById(alarmId).exec();
+    const users = await this.accountsService.findUsersByAlarm(alarmId);
+
+    for (const user of users) {
+      this.accountsService.removeAlarmFromAccount(user.username, alarmId);
     }
 
-    async update(alarmId: string, updateAlarmInput: UpdateAlarmInput): Promise<Alarm> {
-        const existingAlarm = await this.findOne(alarmId);
-    
-        if (!existingAlarm) {
-            return null;
-        }
-    
-        existingAlarm.name = updateAlarmInput.name ?? existingAlarm.name;
-        existingAlarm.triggeredDate = updateAlarmInput.triggeredDate ?? existingAlarm.triggeredDate;
-        existingAlarm.alarmSound = updateAlarmInput.alarmSound ?? existingAlarm.alarmSound;
-        existingAlarm.vibratorSound = updateAlarmInput.vibratorSound ?? existingAlarm.vibratorSound;
-    
-        const updatedAlarm = await (existingAlarm as AlarmDocument).save();
-        return updatedAlarm;
+    return true;
+  }
+
+  async activate(alarmId: string): Promise<Alarm> {
+    const existingAlarm = await this.findOne(alarmId);
+
+    if (!existingAlarm) {
+      return null;
     }
 
-    async remove(alarmId: string): Promise<boolean> {
-        const deleteResult = await this.alarmModel.findByIdAndDelete(alarmId).exec();
+    existingAlarm.activated = true;
 
-        if (!deleteResult) {
-            return false;
-        }
+    const updatedAlarm = await (existingAlarm as AlarmDocument).save();
+    return updatedAlarm;
+  }
 
-        const users = await this.accountsService.findUsersByAlarm(alarmId);
+  async deactivate(alarmId: string): Promise<Alarm> {
+    const existingAlarm = await this.findOne(alarmId);
 
-        for (const user of users) {
-            this.accountsService.removeAlarmFromAccount(user.username, alarmId);
-        }
-
-        return true;
+    if (!existingAlarm) {
+      return null;
     }
 
-    async activate(alarmId: string): Promise<Alarm> {
-        const existingAlarm = await this.findOne(alarmId);
+    existingAlarm.activated = false;
 
-        if (!existingAlarm) {
-            return null;
-        }
-
-        existingAlarm.activated = true;
-
-        const updatedAlarm = await (existingAlarm as AlarmDocument).save();
-        return updatedAlarm;
-    }
-
-    async deactivate(alarmId: string): Promise<Alarm> {
-        const existingAlarm = await this.findOne(alarmId);
-
-        if (!existingAlarm) {
-            return null;
-        }
-
-        existingAlarm.activated = false;
-
-        const updatedAlarm = await (existingAlarm as AlarmDocument).save();
-        return updatedAlarm;
-    }
+    const updatedAlarm = await (existingAlarm as AlarmDocument).save();
+    return updatedAlarm;
+  }
 }

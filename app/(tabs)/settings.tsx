@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import client, { PageContext } from '../../services/api/apolloClient';
+import { LOGOUT_USER } from '../../services/api/graphqlService';
+import { useLazyQuery } from '@apollo/client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import React, { useContext, useState } from 'react';
 import {  StyleSheet, Appearance, Linking } from 'react-native';
 import { View } from '../../components/Themed';
-import { Badge, Button, Divider, List, Switch, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Badge, Button,Text, Divider, List, Switch, TextInput } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
 import RNCalendarEvents from 'react-native-calendar-events';
@@ -9,14 +14,31 @@ import RNCalendarEvents from 'react-native-calendar-events';
 import ThemeChoice from '../../components/ThemeChoice';
 import { useRouter } from 'expo-router';
 
+
+
 export default function TabTwoScreen() {
-    const handleDisconnect = () => {
-        console.log("deconnecter")
-    };
+    const setIsLogged = useContext(PageContext);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [logout, { loading, error }] = useLazyQuery(LOGOUT_USER);
+    const [isSwitchOn, setIsSwitchOn] = useState(Appearance.getColorScheme() === 'dark' ? true : false);
     const navigation = useRouter();
 
+    if (loading) return (<ActivityIndicator />);
+    if (error) setErrorMessage(error.message);
+
+    const handleDisconnect = async () => {
+        logout().then(value => {
+            AsyncStorage.removeItem("token").then(() => {
+                client.clearStore().then(value => {
+                    setIsLogged(false);
+                });
+            })
+        }).catch(err => {
+            setErrorMessage(err.message);
+        });
+    };
+
     // Switch du dark mode
-    const [isSwitchOn, setIsSwitchOn] = React.useState(Appearance.getColorScheme() === 'dark' ? true : false);
     const onToggleSwitch = () => {
         setIsSwitchOn(!isSwitchOn);
         if(isSwitchOn)
@@ -105,12 +127,19 @@ export default function TabTwoScreen() {
                 />
                 <Divider />
             </View>
+
+            <View style={styles.button}>
+                <Button mode="contained" onPress={() => navigation.push('/pages/imports')}>
+                    Imports
+                </Button>
+            </View>
             
             <View style={styles.button}>
                 <Button mode="contained" onPress={handleDisconnect} disabled={false}>
                     Se deconnecter
                 </Button> 
             </View>
+            <Text>{errorMessage}</Text>
         </View>
     );
 }
