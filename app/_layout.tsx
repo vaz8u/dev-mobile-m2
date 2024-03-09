@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
-import { useColorScheme } from 'react-native';
 import { ApolloProvider } from '@apollo/client';
-import client from '../services/api/apolloClient';
+import client, { PageContext } from '../services/api/apolloClient';
+import ConnexionScreen from './pages/connexion';
 import { ThemeProvider } from '../components/ThemeContext';
 
 export {
@@ -45,16 +44,23 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+    const [isLogged, setIsLogged] = useState(false);
 
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
+        <PageContext.Provider value={setIsLogged} >
+            {
+                isLogged
+                    ? <Stack>
+                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+                    </Stack>
+                    : <ConnexionScreen></ConnexionScreen>
+            }
+        </PageContext.Provider>
       </ThemeProvider>
     </ApolloProvider>
   );

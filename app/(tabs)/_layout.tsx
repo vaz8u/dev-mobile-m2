@@ -35,12 +35,7 @@ export default function TabLayout() {
           },
           headerTitleStyle: {
             color: theme.colors.onBackground,
-          },
-          headerRight: () => (
-            <Button mode="contained"  style={styles.buttonConnexion} onPress={() => navigation.push('/pages/connexion')}>
-              Connexion
-            </Button>
-          ),
+          }
         }}
       />
       <Tabs.Screen

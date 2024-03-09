@@ -1,5 +1,5 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { Account } from "src/accounts/entities/account.entity";
+import { Field, ObjectType } from '@nestjs/graphql';
+import { Account } from 'src/accounts/entities/account.entity';
 
 // @ObjectType()
 // export class ExcludePasswordAccount implements Omit<Account, "password"> {
@@ -8,10 +8,9 @@ import { Account } from "src/accounts/entities/account.entity";
 
 @ObjectType()
 export class LoginResponse {
+  @Field()
+  access_token: string;
 
-    @Field()
-    access_token: string
-
-    @Field(() => Account)
-    account: Account
+  @Field(() => Account)
+  account: Account;
 }

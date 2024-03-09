@@ -7,9 +7,10 @@ import { AlarmResolver } from './resolver/alarm.resolver';
 import { AccountsModule } from 'src/accounts/accounts.module';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: Alarm.name, schema: AlarmSchema }]),
-AccountsModule],
-    providers: [AlarmResolver, AlarmsService],
-    exports: [AlarmsService],
+  imports: [
+    MongooseModule.forFeature([{ name: Alarm.name, schema: AlarmSchema }]),
+    AccountsModule,
+  ],
+  providers: [AlarmResolver, AlarmsService],
 })
 export class AlarmsModule {}
