@@ -1,10 +1,8 @@
-name: Build & Publish APK
+name: Build & Publish Release APK
 on: 
-    pull_request:
-      branches:
-        - develop
-      types:
-        - closed
+  push:
+    tags:
+      - '*'
 jobs:
   build:
     runs-on: ubuntu-latest
