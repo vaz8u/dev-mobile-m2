@@ -10,6 +10,7 @@ import { ActivityIndicator, Button, Text, List } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
 import ThemeChoice from '../../components/ThemeChoice';
+import { useRouter } from 'expo-router';
 
 
 export default function TabTwoScreen() {
@@ -19,6 +20,7 @@ export default function TabTwoScreen() {
     const [isSwitchOn, setIsSwitchOn] = useState(Appearance.getColorScheme() === 'dark' ? true : false);
     const [localisationAutorisee, setLocalisationAutorisee] = useState(false);
     const [notificationsAutorisees, setNotificationsAutorisees] = useState(false);
+    const navigation = useRouter();
 
     if (loading) return (<ActivityIndicator />);
     if (error) setErrorMessage(error.message);
@@ -96,6 +98,12 @@ export default function TabTwoScreen() {
                         onPress={() => Linking.openSettings()}
                     />
                 </List.Accordion>
+            </View>
+
+            <View style={styles.button}>
+                <Button mode="contained" onPress={() => navigation.push('/pages/imports')}>
+                    Imports
+                </Button>
             </View>
             
             <View style={styles.button}>
