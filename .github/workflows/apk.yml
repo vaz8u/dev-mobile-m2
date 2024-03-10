@@ -1,7 +1,7 @@
 name: Build & Publish APK
 on: 
-    pull_request:
-        branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,6 +24,10 @@ jobs:
           cd android
           chmod +x ./gradlew
           ./gradlew assembleRelease
+      - name: Move APK
+        run: |
+          mkdir -p release
+          mv android/app/build/outputs/apk/release/*.apk ./release/wakeUp.apk
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
