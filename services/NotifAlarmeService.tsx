@@ -1,8 +1,10 @@
-import { Button, Platform } from 'react-native';
+import { Platform, Vibration } from 'react-native';
 import { NotifAlarme } from '../models/NotifAlarme';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
-import { de } from 'react-native-paper-dates';
+import { List } from 'react-native-paper';
+
+let vibrationInterval: string | number | NodeJS.Timeout | undefined;
 
 // CONFIGURATION DES NOTIFICATIONS // 
 // Attribution d'un handler pour les notifications
@@ -33,6 +35,22 @@ Notifications.setNotificationCategoryAsync('alarme', [
   },
 ], {});
 
+Notifications.addNotificationReceivedListener(() => {
+  if (Platform.OS === 'ios') {
+    vibrationInterval = setInterval(() => {
+      Vibration.vibrate([500, 300, 200, 100, 500]);
+    }, 1000); // Vibrate every 1 second
+  }
+});
+
+Notifications.addNotificationResponseReceivedListener(response => {
+  clearInterval(vibrationInterval);
+  // Lorsque le bouton 'snooze' est cliqué
+  if (response.actionIdentifier === 'snooze') {
+    //TODO
+  }
+});
+
 
 // FONCTIONS //
 // Fonction pour programmer une notification
@@ -43,7 +61,7 @@ export async function schedulePushNotification(notifAlarme: NotifAlarme) {
     await Notifications.setNotificationChannelAsync('alarm', {
       name: 'Alarme notifications',
       importance: Notifications.AndroidImportance.HIGH,
-      sound: undefined, // <- for Android 8.0+, see channelId property below
+      sound: notifAlarme.sound ? String(notifAlarme.sound) : undefined,
     });
   }
   console.log(notifAlarme.date);
@@ -55,6 +73,7 @@ export async function schedulePushNotification(notifAlarme: NotifAlarme) {
       body: notifAlarme.body,
       data: { data: notifAlarme.id },
       sound: notifAlarme.sound,
+      vibrate: [0, 20, 250, 4],
     },
     trigger: { 
       date: new Date(Date.now()+1000 ),
@@ -100,18 +119,21 @@ async function registerForPushNotificationsAsync() {
 // Objet de test
 let notifAlarme: NotifAlarme = {
   id: 0,
-  title: "c'est l'heure",
-  body: 'le president a besoin de vous!',
-  sound: true,
+  title: "Alarme!",
+  body: 'Appuyer sur la notification pour arrêter la vibration',
+  sound: 'SansTitre.waw',
   date: new Date(Date.now()+1000),
 };
+
 // Fonction pour tester l'envoi de notification à la demande
 export function Test(){
   return (
-    <Button title="Appuyer pour envoyer une notification" 
-            onPress={async () => { 
-              await schedulePushNotification(notifAlarme);
-            }}
+    <List.Item
+      style={{backgroundColor: 'white'}}
+      title="Tester les notifications"
+      left={() => <List.Icon style={{marginLeft: 10}} icon="alarm-light"/>}
+      right = {() => <List.Icon style={{marginLeft: 10}} icon="chevron-left" />}
+      onPress={async () => await schedulePushNotification(notifAlarme)}
     />
   );
 
