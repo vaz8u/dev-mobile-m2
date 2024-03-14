@@ -38,7 +38,13 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.989732552774-i88hshcigsakof1147e2h5tjb8rnr2pv"
         }
-      ],"expo-document-picker"
+      ],"expo-document-picker",
+      [
+        "expo-notifications",
+        {
+          "sounds": ["/assets/sounds/SansTitre.wav"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

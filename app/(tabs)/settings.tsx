@@ -13,6 +13,8 @@ import RNCalendarEvents from 'react-native-calendar-events';
 
 import ThemeChoice from '../../components/ThemeChoice';
 import { useRouter } from 'expo-router';
+import { Test } from '../../services/NotifAlarmeService';
+
 
 
 
@@ -126,12 +128,7 @@ export default function TabTwoScreen() {
                     onPress={() => navigation.push('/pages/imports')}
                 />
                 <Divider />
-            </View>
-
-            <View style={styles.button}>
-                <Button mode="contained" onPress={() => navigation.push('/pages/imports')}>
-                    Imports
-                </Button>
+                <Test />
             </View>
             
             <View style={styles.button}>
