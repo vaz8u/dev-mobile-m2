@@ -6,6 +6,7 @@ import AlarmList, {AlarmListInterface, Day} from '../components/AlarmList';
 import { Button, Divider } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { useGetAlarms, useDeleteAlarm } from '../services/api/graphqlService';
+import { getWeekdayAbbreviation } from '../services/DateParserService';
 
 const AlarmListScreen = () => {
     const navigation = useRouter();
@@ -25,7 +26,7 @@ const AlarmListScreen = () => {
                 description: alarm.triggeredDate,
                 enable: alarm.activated,
                 selected: false,
-                day: Day.Mercredi,
+                day: getWeekdayAbbreviation(alarm.triggeredDate),
               }));
               setAlarmList(updatedList);
             }).catch((error) => {

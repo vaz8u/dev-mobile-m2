@@ -10,6 +10,8 @@ import { useState } from 'react';
 import GeolocationService from '../services/GeolocationService';
 import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.input';
 import { useCreateAlarm, useGetAlarms } from '../services/api/graphqlService';
+import { DatePicker } from './DatePicker';
+import { formatToISOString } from '../services/DateParserService';
 
 const AdvancedAlarmForm = () => {
   const navigation = useRouter();
@@ -17,6 +19,8 @@ const AdvancedAlarmForm = () => {
   const [isSecondSwitchToggled, setIsSecondSwitchToggled] = useState(false);
   const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
   const [isVibratorActivated, setIsVibratorActivated] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
   const [createAlarm] = useCreateAlarm();
   const { refetch } = useGetAlarms();
 
@@ -52,6 +56,10 @@ const AdvancedAlarmForm = () => {
     },
   });
 
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+  };
+
   const onSubmit = async (data: any) => {
     let valid = true;
 
@@ -84,9 +92,10 @@ const AdvancedAlarmForm = () => {
       console.log("Vibreur: ", isVibratorActivated);
       const input: CreateAlarmInput = {
         name: data.Name,
-        triggeredDate: '2024-01-10T08:00:00Z',
+        triggeredDate: formatToISOString(selectedDate,data.TimeTriggered.hours,data.TimeTriggered.minutes),
         alarmSound: isAlarmSoundActivated,
         vibratorSound: isVibratorActivated,
+        activated: true
       };
       await createAlarm({ variables: { alarmInput: input } });
       refetch();
@@ -128,7 +137,7 @@ const AdvancedAlarmForm = () => {
           
           <ToggleParameter paramTitle="Son de l'alarme" isParamActivated={isAlarmSoundActivated} onToggle={handleToggleParameter}></ToggleParameter>
           <ToggleParameter paramTitle="Vibreur" isParamActivated={isVibratorActivated} onToggle={handleToggleParameter}></ToggleParameter>
-          
+          <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange}></DatePicker>
           <View style= {styles.row}>
               <Button mode="contained" onPress={handleCancelButtonPress} disabled={false}>
                   Annuler

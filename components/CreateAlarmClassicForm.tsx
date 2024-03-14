@@ -8,6 +8,9 @@ import ToggleParameter from './ToggleParameter';
 import InputTimePicker from './InputTimePicker';
 import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.input';
 import { GET_ALARMS, useCreateAlarm, useGetAlarm, useGetAlarms, useUpdateAlarm } from '../services/api/graphqlService';
+import { formatToISOString, getHoursFromAlarmTime, getMinutesFromAlarmTime, parseAlarmDate, parseAlarmTime } from '../services/DateParserService';
+import { DatePicker } from './DatePicker';
+
 interface ClassicAlarmFormProps {
   editing: boolean;
   alarmId: string;
@@ -17,6 +20,7 @@ const ClassicAlarmForm = ({ editing, alarmId }: ClassicAlarmFormProps) => {
   const [isSwitchToggled, setIsSwitchToggled] = useState(false);
   const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
   const [isVibratorActivated, setIsVibratorActivated] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const [createAlarm] = useCreateAlarm();
   const [updateAlarm] = useUpdateAlarm();
@@ -38,7 +42,12 @@ const ClassicAlarmForm = ({ editing, alarmId }: ClassicAlarmFormProps) => {
     if(editing && alarm){
       const { name, triggeredDate, alarmSound, vibratorSound } = alarm;
       setValue("Name", name);
-      //Needs to setValue for the date as well
+      setValue("TimeTriggered", {
+        hours: getHoursFromAlarmTime(parseAlarmTime(triggeredDate)),
+        minutes: getMinutesFromAlarmTime(parseAlarmTime(triggeredDate))
+      });
+      console.log(parseAlarmDate(triggeredDate));
+      setSelectedDate(new Date(parseAlarmDate(triggeredDate)));
       setIsAlarmSoundActivated(alarmSound);
       setIsVibratorActivated(vibratorSound);
     }
@@ -52,14 +61,17 @@ const ClassicAlarmForm = ({ editing, alarmId }: ClassicAlarmFormProps) => {
       console.log("Affichage des données:");
       console.log("Nom de l'alarme: ", data.Name);
       console.log("Alarme à : ", data.TimeTriggered.hours, "h", data.TimeTriggered.minutes);
+      console.log("AlarmeISO : ", formatToISOString(selectedDate,data.TimeTriggered.hours,data.TimeTriggered.minutes));
       console.log("Son de l'alarme: ", isAlarmSoundActivated);
       console.log("Vibreur: ", isVibratorActivated);
   
+      console.log(data.TimeTriggered);
       const input: CreateAlarmInput = {
         name: data.Name,
-        triggeredDate: '2024-01-10T08:00:00Z',
+        triggeredDate: formatToISOString(selectedDate,data.TimeTriggered.hours,data.TimeTriggered.minutes),
         alarmSound: isAlarmSoundActivated,
         vibratorSound: isVibratorActivated,
+        activated: true
       };
       
       if(editing) {
@@ -68,7 +80,7 @@ const ClassicAlarmForm = ({ editing, alarmId }: ClassicAlarmFormProps) => {
             updateAlarmInput: {
               id: alarmId,
               name: data.Name,
-              triggeredDate: '2024-01-10T08:00:00Z',
+              triggeredDate: formatToISOString(selectedDate,data.TimeTriggered.hours,data.TimeTriggered.minutes),
               alarmSound: isAlarmSoundActivated,
               vibratorSound: isVibratorActivated,
             },
@@ -97,6 +109,10 @@ const ClassicAlarmForm = ({ editing, alarmId }: ClassicAlarmFormProps) => {
     }
   };
 
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+  };
+
   return (
     <View style={[styles.scene]}>
     <Controller control={control} rules={{required: true}}
@@ -115,6 +131,7 @@ const ClassicAlarmForm = ({ editing, alarmId }: ClassicAlarmFormProps) => {
     {errors.TimeTriggered && <Text style={[styles.text]}>This is required.</Text>}
     <ToggleParameter paramTitle="Son de l'alarme" isParamActivated={isAlarmSoundActivated} onToggle={handleToggleParameter}></ToggleParameter>
     <ToggleParameter paramTitle="Vibreur" isParamActivated={isVibratorActivated} onToggle={handleToggleParameter}></ToggleParameter>
+    <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange}></DatePicker>
     <View style= {styles.row}>
         <Button mode="contained" onPress={handleCancelButtonPress} disabled={false}>
             Annuler
