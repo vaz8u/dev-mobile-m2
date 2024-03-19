@@ -50,6 +50,7 @@ const InputTimePicker = ({ label, optional, control, name, toggled, onToggleSwit
   };
 
   return (
+    <View style={{backgroundColor:'transparent'}}>
     <View style={styles.inputContainer}>
       <Text>{label}</Text>
       <Controller
@@ -70,7 +71,10 @@ const InputTimePicker = ({ label, optional, control, name, toggled, onToggleSwit
           );
         }}
       />
+      </View>
+    <View style={styles.inputContainersSwitch}>
       {optional && <Switch value={toggled} onValueChange={onToggleTime} />}
+    </View>
     </View>
   );
 };
@@ -81,7 +85,14 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: 'transparent',
+  },
+  inputContainersSwitch: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'flex-end',
+    backgroundColor: 'transparent',
   },
 });
 

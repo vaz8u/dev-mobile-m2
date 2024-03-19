@@ -12,8 +12,9 @@ interface InputLocationProps {
     onChange: (...event:any[]) => void;
     onBlur: Noop;
     value:string;
+    setValue?: (...event:any[]) => void; 
 }
-const InputLocation = ({label, placeholder, onChange, onBlur, value}:InputLocationProps) => { 
+const InputLocation = ({label, placeholder, onChange, onBlur, value, setValue }:InputLocationProps) => { 
   const [showMap, setShowMap] = useState(false);
   const [markerPosition, setMarkerPosition] = useState<{ latitude: number; longitude: number } | null>(null);
   
@@ -59,16 +60,28 @@ const InputLocation = ({label, placeholder, onChange, onBlur, value}:InputLocati
 
 const handleTextInputChange = (text: string) => {
     onChange(text);
-    getLocationWithAdresse(text)
+    getLocationWithAdresse(text);
+};
+
+const resetValue = () => {
+    onChange('');
+    if(setValue != undefined)
+      setValue('');
 };
 
   return (
     <View style={styles.inputContainer}>
-        <TextInput label={label} value={value} mode="outlined" style={styles.textField}
-        placeholder={placeholder} right={<TextInput.Icon icon="close" />}
-        onChangeText={handleTextInputChange} onBlur={onBlur} onFocus={() => focusShowMap()}/>
-        <Button mode="contained" disabled={false} icon="map-marker" onPress={getCurrentLocation} children={undefined}>
-        </Button>
+        <TextInput 
+          label={label} 
+          value={value} 
+          mode="outlined" 
+          style={styles.textField}
+          placeholder={placeholder} 
+          right={
+              <TextInput.Icon icon="close"  onPress={()=>resetValue()}/>
+          }
+          onChangeText={handleTextInputChange} onBlur={onBlur} onFocus={() => focusShowMap()}/>
+          <Button mode="contained" style={styles.bouton} icon="map-marker" onPress={getCurrentLocation} children={undefined}/>
     </View>
   );
 };
@@ -79,7 +92,6 @@ export default InputLocation;
 const styles = StyleSheet.create({
     scene: {
         flex: 1,
-        backgroundColor:'white',
         padding:10
       },
     row: {
@@ -89,13 +101,13 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems:'flex-end',
+        backgroundColor: 'transparent',
     },
     textField: {
         flex: 1, // Allow TextInput to take up remaining space
         marginRight: 8, // Add some space between TextInput and Button
-        marginTop: 8,
-      },
+        },
     map:{
       position: 'absolute',
       top: 0, 
@@ -103,5 +115,11 @@ const styles = StyleSheet.create({
       width: '100%',
       height: 450,
       zIndex: 1000
+    },
+    bouton:{
+      width: 50,
+      height: 50,
+      marginEnd: 10,
+      justifyContent: 'center', // Centre horizontalement
     }
 });
