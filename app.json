@@ -12,6 +12,11 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "extra": {
+      "eas": {
+        "projectId": "3d458342-36b9-4df8-a103-1cd60625b9f9"
+      }
+    },
     "assetBundlePatterns": [
       "**/*"
     ],

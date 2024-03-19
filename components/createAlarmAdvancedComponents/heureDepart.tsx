@@ -73,7 +73,7 @@ const HeureDepart = (
       rules={{ required: true }}
       render={({ field: { onChange, onBlur, value } }) => (
         <Card style={styles.cartes}>
-        <Card.Title title="Heure de départ estimée" titleStyle={styles.carteTitre} 
+        <Card.Title title="Heure de réveil estimé" titleStyle={styles.carteTitre} 
                     subtitle={alarmeFinale} subtitleStyle={{fontWeight:'bold', fontSize:20}}
             right={(props) => <Button 
                                 mode='contained' 

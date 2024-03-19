@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, Text, Card } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import { Controller, useForm } from "react-hook-form";
@@ -8,7 +8,6 @@ import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.inp
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { DatePicker } from './DatePicker';
-import { formatToISOString } from '../services/DateParserService';
 
 // Models
 import {Alarme} from '../models/Alarme';
@@ -23,6 +22,7 @@ import TempsSupplementaire from './createAlarmAdvancedComponents/tempsSupplement
 import RedondanceSemaine from './createAlarmAdvancedComponents/redondanceSemaine';
 import HeureArrivee from './createAlarmAdvancedComponents/heureArrivee';
 import HeureDepart from './createAlarmAdvancedComponents/heureDepart';
+import { setNotification } from '../services/NotifAlarmeService';
 
 const AdvancedAlarmForm = () => {
 
@@ -110,6 +110,15 @@ const AdvancedAlarmForm = () => {
     alarme.setArrivalTime(data.heureArrivee);
 
     alarme.setTriggeredDate(selectedDate.toISOString());
+    // changer les heures et minutes de TriggeredDate pour correspondre à heureDepart
+    let date = new Date(alarme.triggeredDate);
+    console.log(alarme.departureTime.split(":")[0]);
+    console.log(alarme.departureTime.split(":")[1]);
+    date.setHours(parseInt(alarme.departureTime.split(":")[0]));
+    date.setMinutes(parseInt(alarme.departureTime.split(":")[1]));
+    date.setSeconds(0);
+    alarme.setTriggeredDate(date.toISOString());
+    console.log(alarme.triggeredDate);
     alarme.setAlarmSound(isAlarmSoundActivated);
     alarme.setVibratorSound(isVibratorActivated);
     alarme.setActivated(true);
@@ -133,9 +142,20 @@ console.log(alarme.valide());
         vibratorSound: alarme.vibratorSound,
         activated: alarme.activated
       };
-      await createAlarm({ variables: { alarmInput: input } });
-      refetch();
-      navigation.push("/");
+      try{
+        await createAlarm({ variables: { alarmInput: input } });
+        refetch();
+        if(await setNotification(alarme)){
+          Alert.alert("Succès", "Alarme créée avec succès");
+          navigation.push("/");
+        }
+        else {
+          Alert.alert("Erreur", "Erreur lors de la création de l'alarme, veuillez revoir les données saisies");
+        }
+      }
+      catch(e){
+        Alert.alert("Erreur", "Erreur lors de la création de l'alarme à la base de données");
+      }
     }
   };
 
