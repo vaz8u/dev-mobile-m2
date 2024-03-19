@@ -1,14 +1,10 @@
 import { StyleSheet } from "react-native";
-import { View } from "../components/Themed";
-import { TextInput, Button, Text } from "react-native-paper";
+import { TextInput, Button, Text, Card } from "react-native-paper";
 import ToggleParameter from "./ToggleParameter";
-import InputLocation from "./InputLocation";
-import InputTimePicker from "./InputTimePicker";
 import { Controller, useForm } from "react-hook-form";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { DatePicker } from "./DatePicker";
-import { formatToISOString } from "../services/DateParserService";
 
 // Models
 import { Alarme } from "../models/Alarme";

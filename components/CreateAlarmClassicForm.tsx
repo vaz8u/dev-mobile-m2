@@ -14,7 +14,6 @@ import {
   useGetAlarmsByUserId,
   useUpdateAlarm,
 } from "../services/api/graphqlService";
-import { useQuery } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   formatToISOString,
@@ -23,7 +22,6 @@ import {
   parseAlarmDate,
   parseAlarmTime,
 } from "../services/DateParserService";
-import { DatePicker } from "./DatePicker";
 
 interface ClassicAlarmFormProps {
   editing: boolean;
