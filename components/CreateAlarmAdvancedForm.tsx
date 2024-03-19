@@ -1,39 +1,69 @@
 import { StyleSheet } from 'react-native';
-import { View } from '../components/Themed';
-import { TextInput, Button, Text } from 'react-native-paper';
+import { TextInput, Button, Text, Card } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
-import InputLocation from './InputLocation';
-import InputTimePicker from './InputTimePicker';
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import GeolocationService from '../services/GeolocationService';
 import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.input';
+import { ScrollView } from 'react-native-gesture-handler';
+
+// Models
+import {Alarme} from '../models/Alarme';
+
+// Services
 import { useCreateAlarm, useGetAlarms } from '../services/api/graphqlService';
 
+// Composants
+import MethodeTransport from './createAlarmAdvancedComponents/methodeTransport';
+import Adresses from './createAlarmAdvancedComponents/adresses';
+import TempsSupplementaire from './createAlarmAdvancedComponents/tempsSupplementaire';
+import RedondanceSemaine from './createAlarmAdvancedComponents/redondanceSemaine';
+import HeureArrivee from './createAlarmAdvancedComponents/heureArrivee';
+import HeureDepart from './createAlarmAdvancedComponents/heureDepart';
+
 const AdvancedAlarmForm = () => {
+
+  // Methode de transport
+  const [transport, setTransport] = useState('drive');
+
+  // Temps supplémentaire
+  const [tempsLever, setTempsLever] = useState('');
+  const [tempsArriver, setTempsArriver] = useState('');
+
+  // Redondance semaine
+  const [isClickedAvatar, setIsClickedAvatar] = useState(Array(7).fill(false));
+  const [isRandondence, setIsRandondence] = useState(false);
+   // active ou desactive tout les avatars
+  const rendondanceSwitch = () => {
+    setIsRandondence(!isRandondence);
+    for (const element of isClickedAvatar) {
+      const newIsClickedAvatar = isClickedAvatar.map((value) => {
+        return !isRandondence;
+      });
+      setIsClickedAvatar(newIsClickedAvatar);
+    }
+  }
+   // active ou desactive un avatar
+  const handleAvatarClick = (jour: number) => () => {
+    const newIsClickedAvatar = isClickedAvatar.map((value, index) => {
+      if (index === jour) {
+        return !value;
+      }
+      return value;
+    });
+    setIsClickedAvatar(newIsClickedAvatar);
+  };
+
   const navigation = useRouter();
-  const [isFirstSwitchToggled, setIsFirstSwitchToggled] = useState(false);
-  const [isSecondSwitchToggled, setIsSecondSwitchToggled] = useState(false);
   const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
   const [isVibratorActivated, setIsVibratorActivated] = useState(false);
   const [createAlarm] = useCreateAlarm();
   const { refetch } = useGetAlarms();
 
-  const { getLocationWithAdresse } = GeolocationService();
-
   const handleCancelButtonPress = () => {
     navigation.push("/");
   };
-  const handleToggleSwitch = (pickerNumber: number) => {
-    if (pickerNumber === 1) {
-      setIsFirstSwitchToggled(!isFirstSwitchToggled);
-      setIsSecondSwitchToggled(false);
-    } else if (pickerNumber === 2) {
-      setIsFirstSwitchToggled(false);
-      setIsSecondSwitchToggled(!isSecondSwitchToggled);
-    }
-  };
+
   const handleToggleParameter = (paramTitle: string) => {
     if (paramTitle === 'Son de l\'alarme') {
       setIsAlarmSoundActivated(!isAlarmSoundActivated);
@@ -41,52 +71,60 @@ const AdvancedAlarmForm = () => {
       setIsVibratorActivated(!isVibratorActivated);
     }
   };
-  const { control, setValue, handleSubmit, formState: { errors }} = useForm({
+
+  const { control, handleSubmit, getValues, formState: { errors }} = useForm({
     defaultValues: {
       Name: "",
       Departure: "",
       Arrival: "",
-      DepartureTime: { hours:12, minutes:0 },
-      ArrivalTime: {hours:12, minutes:0 },
-      TimeTriggered: {hours:12, minutes:0}
+      DepartureTime: "",
+      ArrivalTime: "",
+      TimeTriggered: "",
+      heureArrivee: "",
+      heureDepart: "",
     },
   });
 
   const onSubmit = async (data: any) => {
-    let valid = true;
+    console.log(data);
 
-    await getLocationWithAdresse(data.Departure).then((locationAdress) =>{
-      if(locationAdress.length == 0) valid = false; 
-    })
-    .catch((error) => {
-      valid = false;
-      console.error("Error getting location:", error);
-    });
+    let alarme = new Alarme(data.Name);
 
-    await getLocationWithAdresse(data.Arrival).then((locationAdress) =>{
-      if(locationAdress.length == 0) valid = false; 
-    })
-    .catch((error) => {
-      valid = false;
-      console.error("Error getting location:", error);
-    });
+    alarme.setTransportMethod(data.transport);
 
-    if(valid){
-      console.log("Affichage des données:");
-      console.log("Nom de l'alarme: ", data.Name);
-      console.log("Départ de : ", data.Departure);
-      console.log("Arrivée à : ", data.Arrival);
-      if(isFirstSwitchToggled)
-        console.log("Départ à ", data.DepartureTime.hours,"h",data.DepartureTime.minutes);
-      if(isSecondSwitchToggled)
-        console.log("Arrivée à ", data.ArrivalTime.hours,"h",data.ArrivalTime.minutes);
-      console.log("Son de l'alarme: ",isAlarmSoundActivated);
-      console.log("Vibreur: ", isVibratorActivated);
+    alarme.setDeparture(data.Departure);
+    alarme.setArrival(data.Arrival);
+
+    alarme.setWakeUpTime(data.DepartureTime);
+    alarme.setArriveTime(data.ArrivalTime);
+
+    alarme.setRepetition(isRandondence);
+    alarme.setDays(isClickedAvatar);
+
+    alarme.setDepartureTime(data.heureDepart);
+    alarme.setArrivalTime(data.heureArrivee);
+
+    alarme.setTriggeredDate(data.TimeTriggered);
+    alarme.setAlarmSound(isAlarmSoundActivated);
+    alarme.setVibratorSound(isVibratorActivated);
+    alarme.setActivated(true);
+
+    if(alarme.valide()){
       const input: CreateAlarmInput = {
-        name: data.Name,
-        triggeredDate: '2024-01-10T08:00:00Z',
-        alarmSound: isAlarmSoundActivated,
-        vibratorSound: isVibratorActivated,
+        name: alarme.name,
+        transportMethod: alarme.transportMethod,
+        departure: alarme.departure,
+        arrival: alarme.arrival,
+        wakeUpTime: alarme.wakeUpTime,
+        arriveTime: alarme.arriveTime,
+        repetition: alarme.repetition,
+        days: alarme.days,
+        arrivalTime: alarme.arrivalTime,
+        departureTime: alarme.departureTime,
+        triggeredDate: alarme.triggeredDate,
+        alarmSound: alarme.alarmSound,
+        vibratorSound: alarme.vibratorSound,
+        activated: alarme.activated
       };
       await createAlarm({ variables: { alarmInput: input } });
       refetch();
@@ -95,49 +133,75 @@ const AdvancedAlarmForm = () => {
   };
 
   return (
-      <View style={[styles.scene]}>
-          <Controller control={control} rules={{required: true}}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput label="Nom" value={value} mode="outlined"
-            placeholder="Placeholder" right={<TextInput.Icon icon="close" />}
+    <ScrollView style={[styles.scene]}>
+      <Controller control={control} rules={{required: true}}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput label="Nom de l'alarme" value={value} mode="outlined"
+            placeholder="Alarme .." right={<TextInput.Icon icon="close" />}
             onBlur={onBlur}
             onChangeText={onChange}/>
           )}
-          name="Name"/>
-        {errors.Name && <Text style={[styles.text]}>This is required.</Text>}
+        name="Name"/>
+      {errors.Name && <Text style={[styles.text]}>L'alarme n'a pas de nom</Text>}
 
-        <Controller control={control} rules={{required: true}}
-          render={({ field: { onChange, onBlur, value } }) => (
-          <InputLocation label={"Départ"} value={value} placeholder={"Placeholder"} onBlur={onBlur}
-          onChange={onChange}></InputLocation>
-          )}
-        name="Departure"/>
-        {errors.Departure && <Text style={[styles.text]}>This is required.</Text>}
-       
-          <InputTimePicker name="DepartureTime" label={"Heure de départ :"} optional={true} control={control} setValue={setValue} toggled={isFirstSwitchToggled} onToggleSwitch={() => handleToggleSwitch(1)}></InputTimePicker>
-        
-          <Controller control={control} rules={{required: true}}
-          render={({ field: { onChange, onBlur, value } }) => (
-          <InputLocation label={"Arrivée"} value={value} placeholder={"Placeholder"} onBlur={onBlur}
-          onChange={onChange}></InputLocation>
-          )}
-          name="Arrival"/>
-        {errors.Arrival && <Text style={[styles.text]}>This is required.</Text>}
+      <MethodeTransport transport={transport} setTransport={setTransport} />
 
-        <InputTimePicker name="ArrivalTime" label={"Heure d'arrivée :"} optional={true} control={control} setValue={setValue} toggled={isSecondSwitchToggled} onToggleSwitch={() => handleToggleSwitch(2)}></InputTimePicker>
-          
-          <ToggleParameter paramTitle="Son de l'alarme" isParamActivated={isAlarmSoundActivated} onToggle={handleToggleParameter}></ToggleParameter>
-          <ToggleParameter paramTitle="Vibreur" isParamActivated={isVibratorActivated} onToggle={handleToggleParameter}></ToggleParameter>
-          
-          <View style= {styles.row}>
-              <Button mode="contained" onPress={handleCancelButtonPress} disabled={false}>
-                  Annuler
-              </Button>
-              <Button mode="contained" onPress={handleSubmit(onSubmit)}>
-                  Créer
-              </Button>
-          </View>
-    </View>
+      <Adresses 
+        control={control}
+        errors={errors}
+      />
+
+      <TempsSupplementaire 
+        tempsLever={tempsLever} 
+        setTempsLever={setTempsLever} 
+        tempsArriver={tempsArriver} 
+        setTempsArriver={setTempsArriver} 
+      />
+
+      <RedondanceSemaine 
+        isRandondence={isRandondence} 
+        rendondanceSwitch={rendondanceSwitch} 
+        isClickedAvatar={isClickedAvatar} 
+        handleAvatarClick={handleAvatarClick}
+      />
+
+      <HeureArrivee
+        control={control}
+        errors={errors}
+      />
+
+      <HeureDepart 
+        transport={transport}
+        control={control}
+        errors={errors}
+        getValues={getValues}
+      />
+
+
+      <Card style={styles.cartes}>
+        <ToggleParameter
+          paramTitle="Son de l'alarme"
+          isParamActivated={isAlarmSoundActivated}
+          onToggle={handleToggleParameter}
+        />
+        <ToggleParameter
+          paramTitle="Vibreur"
+          isParamActivated={isVibratorActivated}
+          onToggle={handleToggleParameter}
+        />
+      </Card>
+         
+      <Card style={{marginBottom:40,marginTop:5}}>
+      <Card.Actions>
+        <Button mode="contained" onPress={handleCancelButtonPress} disabled={false}>
+          Annuler
+        </Button>
+        <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+          Créer
+        </Button>
+      </Card.Actions>
+    </Card>
+    </ScrollView>
   );
 };
 
@@ -145,7 +209,7 @@ export default AdvancedAlarmForm;
 const styles = StyleSheet.create({
     scene: {
         flex: 1,
-        padding:10
+        padding:10,
       },
     row: {
         display:'flex',
@@ -163,5 +227,21 @@ const styles = StyleSheet.create({
       },
     text:{
       color:"red"
+    },
+    tempsContainer: {
+      flexDirection: 'row', // Aligner les éléments horizontalement
+      justifyContent: 'space-between', // Répartir l'espace entre les éléments
+      backgroundColor: 'transparent',
+    },
+    input: {
+      flex: 1, // Partager l'espace de manière égale
+      marginRight: 8, // Espacement entre les éléments
+    },
+    cartes:{
+      marginTop:5,
+    },
+    carteTitre:{
+      fontSize:18,
+      fontWeight:'bold'
     }
 });

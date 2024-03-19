@@ -1,4 +1,5 @@
 import {API_KEY_TRAJET} from '@env';
+import { de } from 'react-native-paper-dates';
 
 /* Fonction qui permet de convertir une adresse en coordonnées GPS
   * @param nrue : Numéro de rue
@@ -6,10 +7,8 @@ import {API_KEY_TRAJET} from '@env';
   * @param ville : Nom de la ville 
   * @returns {Promise<any>} : Résultat de la requête
  */
-export async function adresseToCoords(nrue: string, rue: string, ville: string) {  
+export async function adresseToCoords(adresse: any) {  
     // Création de l'adresse complète
-    const adresse = `${nrue} ${rue},${ville},France`;
-  
     try {
       // Requête API
       const response = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${adresse}&format=json&apiKey=${API_KEY_TRAJET}`, {
@@ -36,7 +35,7 @@ export async function adresseToCoords(nrue: string, rue: string, ville: string) 
   * @returns {Promise<any>} : Résultat de la requête
   * @throws {Error} : Erreur lors du calcul du trajet
   */
-export async function trajet(depart: any, arrivee: any) {
+export async function trajet(depart: any, arrivee: any, deplacement:string) {
     try {
       // Récupére les coordonnées du lieu de départ
       const departCoords = await getCoordinates(depart);
@@ -44,7 +43,7 @@ export async function trajet(depart: any, arrivee: any) {
       const arriveeCoords = await getCoordinates(arrivee);
   
       // Calcule le trajet
-      const result = await apiTrajet(departCoords, arriveeCoords);
+      const result = await apiTrajet(departCoords, arriveeCoords,deplacement);
   
       // Récupére la distance et le temps du trajet
       let distance = result.features[0].properties.distance;
@@ -68,7 +67,7 @@ export async function trajet(depart: any, arrivee: any) {
   export async function getCoordinates(adresse: any): Promise<string> {
     try {
       // Récupère les coordonnées de l'adresse
-      const response = await adresseToCoords(adresse.nrue, adresse.rue, adresse.ville);
+      const response = await adresseToCoords(adresse);
   
       // Extrait les coordonnées
       const lat = response.results[0].lat.toString().substring(0, 10);
@@ -87,7 +86,7 @@ export async function trajet(depart: any, arrivee: any) {
   * @param arrivee : Lieu d'arrivée
   * @returns {Promise<any>} : Résultat de la requête
   */
-export async function apiTrajet(depart: any, arrivee: any) {
+export async function apiTrajet(depart: any, arrivee: any, deplacement: string) {
   try {
     // Options de la requête
     const requestOptions = {
@@ -95,7 +94,8 @@ export async function apiTrajet(depart: any, arrivee: any) {
     };
 
     // Paramètres de la requête
-    const mode = 'drive';
+    const mode = deplacement;
+    console.log(mode);
 
     // Requête avec les paramètres
     const response = await fetch(`https://api.geoapify.com/v1/routing?waypoints=${depart}|${arrivee}&mode=${mode}&apiKey=${API_KEY_TRAJET}`, requestOptions);
