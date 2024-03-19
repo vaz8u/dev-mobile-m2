@@ -87,4 +87,21 @@ export class Alarme {
             this.departureTime == ""
         );
     }
+
+    tostring():string {
+        return "name: " + this.name + "\n" + 
+        "transportMethod: " + this.transportMethod + "\n" +
+        "departure: " + this.departure + "\n" +
+        "arrival: " + this.arrival + "\n" +
+        "wakeUpTime: " + this.wakeUpTime + "\n" +
+        "arriveTime: " + this.arriveTime + "\n" +
+        "repetition: " + this.repetition + "\n" +
+        "days: " + this.days + "\n" +
+        "arrivalTime: " + this.arrivalTime + "\n" +
+        "departureTime: " + this.departureTime + "\n" +
+        "triggeredDate: " + this.triggeredDate + "\n" +
+        "alarmSound: " + this.alarmSound + "\n" +
+        "vibratorSound: " + this.vibratorSound + "\n" +
+        "activated: " + this.activated;
+    }
 }

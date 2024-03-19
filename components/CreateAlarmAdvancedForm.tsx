@@ -7,6 +7,9 @@ import { useState } from 'react';
 import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.input';
 import { ScrollView } from 'react-native-gesture-handler';
 
+import { DatePicker } from './DatePicker';
+import { formatToISOString } from '../services/DateParserService';
+
 // Models
 import {Alarme} from '../models/Alarme';
 
@@ -29,6 +32,11 @@ const AdvancedAlarmForm = () => {
   // Temps supplémentaire
   const [tempsLever, setTempsLever] = useState('');
   const [tempsArriver, setTempsArriver] = useState('');
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+  };
 
   // Redondance semaine
   const [isClickedAvatar, setIsClickedAvatar] = useState(Array(7).fill(false));
@@ -79,18 +87,15 @@ const AdvancedAlarmForm = () => {
       Arrival: "",
       DepartureTime: "",
       ArrivalTime: "",
-      TimeTriggered: "",
       heureArrivee: "",
       heureDepart: "",
     },
   });
 
   const onSubmit = async (data: any) => {
-    console.log(data);
-
     let alarme = new Alarme(data.Name);
 
-    alarme.setTransportMethod(data.transport);
+    alarme.setTransportMethod(transport);
 
     alarme.setDeparture(data.Departure);
     alarme.setArrival(data.Arrival);
@@ -104,11 +109,13 @@ const AdvancedAlarmForm = () => {
     alarme.setDepartureTime(data.heureDepart);
     alarme.setArrivalTime(data.heureArrivee);
 
-    alarme.setTriggeredDate(data.TimeTriggered);
+    alarme.setTriggeredDate(selectedDate.toISOString());
     alarme.setAlarmSound(isAlarmSoundActivated);
     alarme.setVibratorSound(isVibratorActivated);
     alarme.setActivated(true);
 
+    console.log(alarme);
+console.log(alarme.valide());
     if(alarme.valide()){
       const input: CreateAlarmInput = {
         name: alarme.name,
@@ -177,6 +184,7 @@ const AdvancedAlarmForm = () => {
         getValues={getValues}
       />
 
+      <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange}></DatePicker>
 
       <Card style={styles.cartes}>
         <ToggleParameter
