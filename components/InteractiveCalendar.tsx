@@ -20,27 +20,6 @@ const InteractiveCalendar = () => {
   const theme = useTheme();
   const [themeKey, setThemeKey] = useState(0);
 
-  // Ajoutez cette fonction à votre composant InteractiveCalendar
-const generateTestAlarms = () => {
-  const today = new Date();
-  const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  const testAlarms = [];
-  for (let i = 0; i < 15; i++) {
-    const hours = Math.floor(Math.random() * 24);
-    const minutes = Math.floor(Math.random() * 60);
-    const paddedHours = String(hours).padStart(2, '0');
-    const paddedMinutes = String(minutes).padStart(2, '0');
-    const time = `${paddedHours}:${paddedMinutes}`;
-    testAlarms.push({
-      time,
-      description: `Test Alarm ${i + 1}`,
-    });
-  }
-  setAlarms({ [formattedDate]: testAlarms });
-};
-useEffect(() => {
-  generateTestAlarms();
-}, []);
   const { data, refetch } = useGetAlarms();
   useEffect(() => {
     const fetchAlarms = () => {
@@ -67,11 +46,11 @@ useEffect(() => {
     
   }, [data]);
 
-  const sortedAlarms = [...alarms[selectedDate]].sort((a, b) => {
+  const sortedAlarms = selectedDate?[...(alarms[selectedDate] || [])].sort((a, b) => {
     const timeA = parseInt(a.time.replace(':', ''), 10);
     const timeB = parseInt(b.time.replace(':', ''), 10);
     return timeA - timeB;
-  });
+  }) : [];
 
   useEffect(() => {
     // Mettez à jour la clé du thème pour forcer le rendu du calendrier lorsqu'il y a un changement de thème
@@ -93,7 +72,7 @@ useEffect(() => {
       <View>
         <Text style={styles.alarmText}>Alarmes du {selectedDate}</Text>
         <FlatList
-          data={alarms[selectedDate]}
+          data={sortedAlarms}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.alarmContainer}>
