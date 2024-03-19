@@ -91,7 +91,7 @@ const HeureDepart = (
                                     setError('Il n\'y a pas d\'heure d\'arrivée');
                                   setEnCours(false);
                                   setTexte('Calculer');
-                                  onChange();
+                                  onChange(value);
                                   }} >{texte}</Button>} />
           <Card.Content style={{marginEnd:30}}>
             {distanceTrajet!='' && tempsTrajet!='' && 
@@ -113,8 +113,8 @@ const HeureDepart = (
                 </Dialog.Actions>
               </Dialog>
             </Portal>
+            {errors.heureDepart && <Text style={styles.text}>Il n'y a pas d'heure de départ</Text>}
           </Card.Content>
-          {errors.heureDepart && <Text style={styles.text}>Il n'y a pas d'heure de départ</Text>}
       </Card>
       )}
       name="heureDepart"
