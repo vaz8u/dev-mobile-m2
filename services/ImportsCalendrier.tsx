@@ -5,6 +5,8 @@ import liensEDT from '../assets/liensEDT.json';
 import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 import * as DP from 'expo-document-picker';
+import { ca } from 'react-native-paper-dates';
+import { readFile } from 'react-native-fs';
 
 export function getLienEDT_FAC(classe:string): string {
     // id = 'base'
@@ -18,8 +20,14 @@ export function getLienEDT_FAC(classe:string): string {
 
 export async function convertIcsToJson(_data:string): Promise<any> {
     // Télécharger le fichier
-    const response = await fetch(_data);
-    const data = await response.text();
+    let data = '';
+    try{
+        const response = await fetch(_data);
+        data = await response.text();
+    }catch(e){
+        data = await readFile(_data, 'utf8');
+    }
+    
 
     // Lire le contenu du fichier
     const icsData = data;
@@ -65,13 +73,16 @@ export function creerElementsCalendrierFromJson(json: any): Evenement[] {
 
 // Retourne les calendriers détectés dans le téléphone sous forme de liste de string
 export async function getCalendriers(): Promise<any>{
-    await RNCalendarEvents.requestPermissions();
+    let requete = await RNCalendarEvents.requestPermissions();
+    if(requete !== 'authorized')
+        return [requete];
     if(await RNCalendarEvents.checkPermissions()){
         let calendars = await RNCalendarEvents.findCalendars();
         let events = await RNCalendarEvents.fetchAllEvents(new Date().toISOString(), new Date(2024, 12, 31).toISOString());
         afficherCalendriersTrouvees(calendars, events); // DEBUG
         return calendars.map((calendar: any) => calendar.title); 
     }
+    return [];
 }
 
 // Ajoute le calendrier à la liste des calendriers de l'utilisateur
@@ -117,7 +128,7 @@ export async function importManuel(): Promise<any>{
             return [];
         let res: Calendrier[] = [];
         for(const element of assets){
-            const calendrier = new Calendrier(await convertIcsToJson(element.uri), element.name, 'blue');
+            const calendrier = new Calendrier(creerElementsCalendrierFromJson(await convertIcsToJson(element.uri)), element.name, 'blue');
             res.push(calendrier);
             console.log(calendrier);
         }

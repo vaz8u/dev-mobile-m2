@@ -3,64 +3,35 @@ import React, { useContext, useState } from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import { Button, TextInput } from 'react-native-paper';
-import { GRAPHQL_URI, expo_go } from '@env';
+import { expo_go } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PageContext } from '../../services/api/apolloClient';
 import { useLogin } from '../../services/api/graphqlService';
+import { ApolloError } from '@apollo/client';
 
 export default function ConnexionScreen() {
-    const setIsLogged = useContext(PageContext);
+  const setIsLogged = useContext(PageContext);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [login] = useLogin();
-
-  const fetchTokenDynamically = async (username:string, password:string) => {
-    // TODO use useLogin()
-    const response = await fetch(GRAPHQL_URI, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `
-          mutation {
-            login(loginAccountInput: {
-              username: "${username}"
-              password: "${password}"
-            }) {
-              access_token
-            }
-          }
-        `,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch token');
-    }
-
-    const data = await response.json();
-
-    if (data.errors && data.errors.length !== 0) {
-        throw new Error(data.errors[0].message);
-    }
-
-    const token:string = data.data.login.access_token;
-
-    await AsyncStorage.setItem("token", token);
-
-    if (!token) {
-        throw new Error("Token not found in the response");
-    }
-  };
-
+  const [login, { loading }] = useLogin();
 
   const handleLogin = () => {
-    fetchTokenDynamically(email, password).then(res => {
-        setIsLogged(true);
-    }).catch(err => {
-        setErrorMessage(err.message)
+    setErrorMessage('');
+
+    login({ variables: { loginAccountInput: {
+        username: email,
+        password: password
+    }}}).then(res => {
+        const token:string = res.data.login.access_token;
+        AsyncStorage.setItem("token", token, () => {
+            setIsLogged(true);
+        });
+    }).catch((err: ApolloError) => {
+        const qf = err.graphQLErrors[0] as any;
+        if (qf.code === 'UNAUTHENTICATED') {
+            setErrorMessage('Les identifiants ne sont pas valides');
+        }
     });
   }
 
@@ -84,9 +55,13 @@ export default function ConnexionScreen() {
         style={styles.errorMessage}>
             { errorMessage }
       </Text>
-      <Button icon="login" mode="contained" onPress={handleLogin} style={styles.button}>
-        Se connecter
-      </Button>
+
+      {loading 
+        ? <Button icon='refresh' mode="contained" loading={true} disabled={true}>Chargement ...</Button>
+        : <Button icon="login" mode="contained" onPress={handleLogin} style={styles.button}>
+            Se connecter
+        </Button>
+        }
 
       {setGoogleButton()}
 

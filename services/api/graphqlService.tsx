@@ -131,7 +131,7 @@ export const useCreateAccount = () => {
 };
 
 export const useCreateAlarm = () => {
-  return useMutation(CREATE_ALARM);
+    return useMutation(CREATE_ALARM);
 };
 
 export const useGetAccounts = () => {
