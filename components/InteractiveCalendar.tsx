@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, View as ViewRN } from 'react-native';
+import { StyleSheet, FlatList, View as ViewRN, ScrollView } from 'react-native';
 import { View } from '../components/Themed';
 import { Text, useTheme } from 'react-native-paper';
 import { Calendar } from 'react-native-calendars';
@@ -20,7 +20,27 @@ const InteractiveCalendar = () => {
   const theme = useTheme();
   const [themeKey, setThemeKey] = useState(0);
 
-
+  // Ajoutez cette fonction à votre composant InteractiveCalendar
+const generateTestAlarms = () => {
+  const today = new Date();
+  const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const testAlarms = [];
+  for (let i = 0; i < 15; i++) {
+    const hours = Math.floor(Math.random() * 24);
+    const minutes = Math.floor(Math.random() * 60);
+    const paddedHours = String(hours).padStart(2, '0');
+    const paddedMinutes = String(minutes).padStart(2, '0');
+    const time = `${paddedHours}:${paddedMinutes}`;
+    testAlarms.push({
+      time,
+      description: `Test Alarm ${i + 1}`,
+    });
+  }
+  setAlarms({ [formattedDate]: testAlarms });
+};
+useEffect(() => {
+  generateTestAlarms();
+}, []);
   const { data, refetch } = useGetAlarms();
   useEffect(() => {
     const fetchAlarms = () => {
@@ -47,6 +67,12 @@ const InteractiveCalendar = () => {
     
   }, [data]);
 
+  const sortedAlarms = [...alarms[selectedDate]].sort((a, b) => {
+    const timeA = parseInt(a.time.replace(':', ''), 10);
+    const timeB = parseInt(b.time.replace(':', ''), 10);
+    return timeA - timeB;
+  });
+
   useEffect(() => {
     // Mettez à jour la clé du thème pour forcer le rendu du calendrier lorsqu'il y a un changement de thème
     setThemeKey((prevKey: number) => prevKey + 1);
@@ -61,19 +87,22 @@ const InteractiveCalendar = () => {
       return;
     }
     if (!(selectedDate in alarms)) {
-      return <Text style={styles.noAlarmText}>Pas d'alarme active le {selectedDate}</Text>;
+      return <Text style={styles.alarmText}>Pas d'alarme active le {selectedDate}</Text>;
     }
     return (
-      <FlatList
-        data={alarms[selectedDate]}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.alarmContainer}>
-            <Text style={styles.alarmTime}>{item.time}</Text>
-            <Text style={styles.alarmDescription}>{item.description}</Text>
-          </View>
-        )}
-      />
+      <View>
+        <Text style={styles.alarmText}>Alarmes du {selectedDate}</Text>
+        <FlatList
+          data={alarms[selectedDate]}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.alarmContainer}>
+              <Text style={styles.alarmDescription}>{item.description}</Text>
+              <Text style={styles.alarmTime}>À {item.time.replace(':', 'h')}</Text>
+            </View>
+          )}
+        />
+       </View>
     );
   };
   const markedDates = Object.keys(alarms).reduce((marked, date) => {
@@ -82,9 +111,10 @@ const InteractiveCalendar = () => {
   }, {} as Record<string, { selected:boolean; marked: boolean }>);
   
   return (
-    <View >
+    <ScrollView>
       <ViewRN >
         <Calendar key={themeKey} onDayPress={handleDayPress} markedDates={markedDates}
+
           theme={{
             calendarBackground: theme.colors.surfaceVariant,
             todayTextColor: theme.colors.primary,
@@ -97,7 +127,7 @@ const InteractiveCalendar = () => {
           {renderAlarms()}
         </View>
       </ViewRN>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -111,7 +141,7 @@ const styles = StyleSheet.create({
   renderAlarms:{
     height: "100%"
   },
-  noAlarmText: {
+  alarmText: {
     fontSize: 18,
     textAlign: 'center',
   },
@@ -119,16 +149,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'lightgray',
     paddingVertical: 10,
+    marginLeft: 15
   },
   alarmTime: {
+    fontSize: 14,
+  },
+  alarmDescription: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
-    color: 'white'
-  },
-  alarmDescription: {
-    fontSize: 14,
-    color:'white'
   },
   text:{
       color:'white',
