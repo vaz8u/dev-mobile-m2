@@ -11,6 +11,7 @@ import {
 } from "../services/api/graphqlService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLazyQuery, useQuery } from "@apollo/client";
+import { getWeekdayAbbreviation } from "../services/DateParserService";
 
 const AlarmListScreen = () => {
   const navigation = useRouter();
@@ -52,7 +53,7 @@ const AlarmListScreen = () => {
             description: alarm.triggeredDate,
             enable: alarm.activated,
             selected: false,
-            day: Day.Mercredi,
+            day: getWeekdayAbbreviation(alarm.triggeredDate),
           }));
 
           setAlarmList(updatedList);
