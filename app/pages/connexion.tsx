@@ -28,6 +28,11 @@ export default function ConnexionScreen() {
             setIsLogged(true);
         });
     }).catch((err: ApolloError) => {
+        if (err.networkError?.message === 'Network request failed') {
+            setErrorMessage('La connexion au serveur ne peut pas être effectuée. Veuillez réessayer plus tard.');
+            return;
+        }
+
         const qf = err.graphQLErrors[0] as any;
         if (qf.code === 'UNAUTHENTICATED') {
             setErrorMessage('Les identifiants ne sont pas valides');
@@ -86,6 +91,8 @@ const setGoogleButton = () => {
 const styles = StyleSheet.create({
     errorMessage: {
         color: 'red',
+        width: '90%',
+        textAlign: 'center'
     },
   container: {
     display: 'flex',
