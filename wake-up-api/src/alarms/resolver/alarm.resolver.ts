@@ -33,6 +33,11 @@ export class AlarmResolver {
     return this.alarmsService.findOne(id);
   }
 
+  @Query(() => [Alarm], { name: 'alarmsByUserId' })
+  findByUserId(@Args('id', { type: () => String }) id: string) {
+    return this.alarmsService.findByUserId(id);
+  }
+
   @Mutation(() => Alarm)
   updateAlarm(@Args('updateAlarmInput') updateAlarmInput: UpdateAlarmInput) {
     return this.alarmsService.update(updateAlarmInput.id, updateAlarmInput);

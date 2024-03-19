@@ -24,6 +24,7 @@ export default function ConnexionScreen() {
         password: password
     }}}).then(res => {
         const token:string = res.data.login.access_token;
+        AsyncStorage.setItem("userId", res.data.login.account._id);
         AsyncStorage.setItem("token", token, () => {
             setIsLogged(true);
         });

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, View as ViewRN } from 'react-native';
-import { View } from '../components/Themed';
-import { Text, useTheme } from 'react-native-paper';
-import { Calendar } from 'react-native-calendars';
-import { useGetAlarms } from '../services/api/graphqlService';
-import { parseAlarmDate, parseAlarmTime } from '../services/DateParserService';
+import React, { useEffect, useState } from "react";
+import { StyleSheet, FlatList, View as ViewRN } from "react-native";
+import { View } from "../components/Themed";
+import { Text, useTheme } from "react-native-paper";
+import { Calendar } from "react-native-calendars";
+import { useGetAlarmsByUserId } from "../services/api/graphqlService";
+import { parseAlarmDate, parseAlarmTime } from "../services/DateParserService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 interface Alarm {
   time: string;
   description: string;
@@ -15,36 +16,55 @@ interface Alarms {
 }
 
 const InteractiveCalendar = () => {
-  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [alarms, setAlarms] = useState<Alarms>({});
   const theme = useTheme();
   const [themeKey, setThemeKey] = useState(0);
+  const [userId, setUserId] = useState("");
 
-
-  const { data, refetch } = useGetAlarms();
+  const { data, refetch } = useGetAlarmsByUserId(userId);
   useEffect(() => {
+    AsyncStorage.getItem("userId").then((value) => {
+      setUserId(value ?? "");
+    });
+
     const fetchAlarms = () => {
-      refetch().then((alarmsData) => {
-        const fetchedAlarms = alarmsData?.data?.alarms || [];
-        const updatedList = fetchedAlarms.reduce((acc: { [x: string]: { time: string; description: any }[]; }, alarm: { triggeredDate: string; name: string; activated:boolean;}) => {
-          if(!alarm.activated) return acc;
-          const parsedDate = parseAlarmDate(alarm.triggeredDate);
-                
-          if (acc[parsedDate]) {
-            acc[parsedDate].push({ time: parseAlarmTime(alarm.triggeredDate), description: alarm.name });
-          } else {
-            acc[parsedDate] = [{ time: parseAlarmTime(alarm.triggeredDate), description: alarm.name }];
-          }
-                  
-          return acc;
-      }, {} as Alarms);
-      setAlarms(updatedList);
-      }).catch((error) => {
-        console.error('Error fetching alarms:', error);
-      });
+      refetch()
+        .then((alarmsData) => {
+          const fetchedAlarms = alarmsData?.data?.alarms || [];
+          const updatedList = fetchedAlarms.reduce(
+            (
+              acc: { [x: string]: { time: string; description: any }[] },
+              alarm: { triggeredDate: string; name: string; activated: boolean }
+            ) => {
+              if (!alarm.activated) return acc;
+              const parsedDate = parseAlarmDate(alarm.triggeredDate);
+
+              if (acc[parsedDate]) {
+                acc[parsedDate].push({
+                  time: parseAlarmTime(alarm.triggeredDate),
+                  description: alarm.name,
+                });
+              } else {
+                acc[parsedDate] = [
+                  {
+                    time: parseAlarmTime(alarm.triggeredDate),
+                    description: alarm.name,
+                  },
+                ];
+              }
+
+              return acc;
+            },
+            {} as Alarms
+          );
+          setAlarms(updatedList);
+        })
+        .catch((error) => {
+          console.error("Error fetching alarms:", error);
+        });
     };
     fetchAlarms();
-    
   }, [data]);
 
   useEffect(() => {
@@ -57,11 +77,15 @@ const InteractiveCalendar = () => {
   };
 
   const renderAlarms = () => {
-    if(!selectedDate) {
+    if (!selectedDate) {
       return;
     }
     if (!(selectedDate in alarms)) {
-      return <Text style={styles.noAlarmText}>Pas d'alarme active le {selectedDate}</Text>;
+      return (
+        <Text style={styles.noAlarmText}>
+          Pas d'alarme active le {selectedDate}
+        </Text>
+      );
     }
     return (
       <FlatList
@@ -79,23 +103,24 @@ const InteractiveCalendar = () => {
   const markedDates = Object.keys(alarms).reduce((marked, date) => {
     marked[date] = { selected: true, marked: true };
     return marked;
-  }, {} as Record<string, { selected:boolean; marked: boolean }>);
-  
+  }, {} as Record<string, { selected: boolean; marked: boolean }>);
+
   return (
-    <View >
-      <ViewRN >
-        <Calendar key={themeKey} onDayPress={handleDayPress} markedDates={markedDates}
+    <View>
+      <ViewRN>
+        <Calendar
+          key={themeKey}
+          onDayPress={handleDayPress}
+          markedDates={markedDates}
           theme={{
             calendarBackground: theme.colors.surfaceVariant,
             todayTextColor: theme.colors.primary,
             dayTextColor: theme.colors.onBackground,
             arrowColor: theme.colors.primary,
-            monthTextColor: theme.colors.onBackground
+            monthTextColor: theme.colors.onBackground,
           }}
         />
-        <View style={styles.renderAlarms}>
-          {renderAlarms()}
-        </View>
+        <View style={styles.renderAlarms}>{renderAlarms()}</View>
       </ViewRN>
     </View>
   );
@@ -105,33 +130,33 @@ export default InteractiveCalendar;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  renderAlarms:{
-    height: "100%"
+  renderAlarms: {
+    height: "100%",
   },
   noAlarmText: {
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
   },
   alarmContainer: {
     borderBottomWidth: 1,
-    borderBottomColor: 'lightgray',
+    borderBottomColor: "lightgray",
     paddingVertical: 10,
   },
   alarmTime: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
-    color: 'white'
+    color: "white",
   },
   alarmDescription: {
     fontSize: 14,
-    color:'white'
+    color: "white",
   },
-  text:{
-      color:'white',
-      backgroundColor:'red'
-  }
+  text: {
+    color: "white",
+    backgroundColor: "red",
+  },
 });
