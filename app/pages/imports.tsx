@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {  Linking, StyleSheet } from "react-native";
-import { View } from '../../components/Themed';
-import { List, Button, Text, Snackbar, Searchbar, IconButton, Dialog } from 'react-native-paper';
+import { View, ScrollView } from '../../components/Themed';
+import { List, Button, Text, Snackbar, Searchbar, IconButton, Dialog, useTheme } from 'react-native-paper';
 import liensEDT from '../../assets/liensEDT.json';
 import * as importsCalendriers from '../../services/ImportsCalendrier';
 import {Calendrier} from '../../models/Evenement';
@@ -22,6 +22,8 @@ export default function ImportsPage() {
     const onToggleSnackBar = () => setVisible(!visible);
     const onDismissSnackBar = () => setVisible(false);
     const [text_snackbar, settext_snackbar] = useState<string>('');
+    const theme = useTheme();
+
     async function ajoutCalendrier(item: string) {
       console.log("Ajout de ", item);
       // si item n'st pas dans liensEDT
@@ -72,7 +74,7 @@ export default function ImportsPage() {
         return (
             <Button
                 icon="plus-circle-outline" 
-                mode="contained-tonal" 
+                mode="contained" 
                 onPress={() => ajoutCalendrier(subItem)}>
                 Ajouter
             </Button>
@@ -122,7 +124,7 @@ export default function ImportsPage() {
     
 
     return (
-      <View>
+      <ScrollView style={styles.container}>
         <Text style={styles.titre}>Options d'importation d'emploi du temps</Text>
         
         <List.Accordion
@@ -130,23 +132,23 @@ export default function ImportsPage() {
           title="Fac"
         >
           <Searchbar
-          placeholder="Rechercher une classe ..."
-          onChangeText={setSearchQuery}
-          value={searchQuery}
-          style={styles.searchbar}
-          />
-          <List.Subheader style={styles.text}>UFR MIM</List.Subheader>
-          {liensEDT
-          .map((lien: any, index: number) => ({id: lien.id, index}))
-          .filter((lien: any) => lien.id.toUpperCase() !== 'BASE')
-          .filter((lien: any) => lien.id.toUpperCase().includes(searchQuery.toUpperCase()))
-          .map((lien: any) => (
-            <List.Item
-            key={lien.index}
-            title={lien.id.toUpperCase()}
-            right={() => boutonAjouter(lien.id,'fac')}
+            placeholder="Rechercher une classe ..."
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            style={[styles.searchbar, { backgroundColor: theme.colors.surface }]}     
             />
-          ))}
+            <List.Subheader style={styles.text}>UFR MIM</List.Subheader>
+            {liensEDT
+            .map((lien: any, index: number) => ({id: lien.id, index}))
+            .filter((lien: any) => lien.id.toUpperCase() !== 'BASE')
+            .filter((lien: any) => lien.id.toUpperCase().includes(searchQuery.toUpperCase()))
+            .map((lien: any) => (
+              <List.Item
+              key={lien.index}
+              title={lien.id.toUpperCase()}
+              right={() => boutonAjouter(lien.id,'fac')}
+              />
+            ))}
         </List.Accordion>
 
         <List.Accordion
@@ -155,7 +157,7 @@ export default function ImportsPage() {
         >
           {AuthcalendriersTelephone ? (
             <Button
-            mode="contained-tonal"
+            mode="contained"
             style={styles.button_center}
                     onPress={async () => {
                       setLiens([]);
@@ -242,11 +244,14 @@ export default function ImportsPage() {
         </Dialog.Actions>
         </Dialog>
         
-      </View>
+      </ScrollView>
       );
     }
 
 const styles = StyleSheet.create({
+  container:{
+    flex: 1
+  },
   button_center: {
     width: '75%',
     alignSelf: 'center',
@@ -260,12 +265,6 @@ const styles = StyleSheet.create({
   },
   text : {
     textAlign: 'center',
-  },
-  accordeon: {
-    margin: 10,
-    padding: 10,
-    backgroundColor: 'blue',
-    borderRadius: 50
   },
   snackbar: {
     bottom: 0,

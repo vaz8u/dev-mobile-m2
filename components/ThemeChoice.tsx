@@ -41,7 +41,6 @@ const ThemeChoice = () => {
       } catch (error) {
           console.error('Erreur lors de la sauvegarde du thème:', error);
       }
-
     };
 
     useEffect(() => {
@@ -90,6 +89,7 @@ const ThemeChoice = () => {
                 />
                 <Icon source="moon-waxing-crescent" color={theme.dark? 'yellow':'gray'} size={30}></Icon>
             </View>
+          
             <FlatList
                 data={themeList}
                 renderItem={itemThemeChoice} 
