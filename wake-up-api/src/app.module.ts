@@ -9,6 +9,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AlarmsModule } from './alarms/alarms.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { GraphQLFormattedError } from 'graphql';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -48,5 +50,7 @@ import { GraphQLFormattedError } from 'graphql';
     AlarmsModule,
     AuthModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
