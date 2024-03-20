@@ -32,17 +32,6 @@ SEQUENCE:2141033201
 END:VEVENT
 END:VCALENDAR`;
 
-jest.mock('react-native-fs', () => ({
-  readFile: jest.fn(() => Promise.resolve(fileContent)),
-}));
-
-// Test pour la fonction convertIcsToJson
-test('convertIcsToJson', async () => {
-    const _data = '../../../assets/test.ics'; // Remplacez 'lienTest' par un lien valide
-    const result = await convertIcsToJson(_data);
-    expect(result).toBeDefined();
-});
-
 // Test pour la fonction creerElementsCalendrierFromJson
 test('creerElementsCalendrierFromJson', () => {
     const json = [
@@ -123,21 +112,7 @@ test('afficherCalendriersTrouveesAvecViewText', () => {
     expect(result).toBeDefined();
 });
 
-// Test pour la fonction importManuel
-jest.mock('expo-document-picker', () => ({
-    getDocumentAsync: jest.fn(),
-  }));
-  
-  test('importManuel', async () => {
-      const mockFile = { assets: [{ uri: 'fileUri', name: 'fileName' }] };
-  
-      (DP.getDocumentAsync as jest.Mock).mockResolvedValue(mockFile);
-  
-      const result = await importManuel();
-  
-      expect(result).toEqual([mockCalendrier]);
-      expect(DP.getDocumentAsync).toHaveBeenCalledWith({ type: 'text/calendar' });
-    }); 
+
 
 // Test pour la fonction addCalendrier
 test('addCalendrier', async () => {

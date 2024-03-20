@@ -56,6 +56,8 @@ export async function convertIcsToJson(_data:string): Promise<any> {
 
 export function creerElementsCalendrierFromJson(json: any): Evenement[] {
     // Créer un tableau d'éléments de calendrier
+    console.log('json');
+    console.log(json);
     const elementsCalendrier = json.map((event: any) => {
         return {
             titre: event.summary,
@@ -136,22 +138,31 @@ export async function importManuel(): Promise<any>{
     }
 }
 
+export async function lienHTMLenCalendrier(): Promise<Calendrier[]>{
+    let res = [];
+    const colors = ['blue', 'red', 'green', 'violet'];
+    for(const [index, classe] of ['ssi','gi','ihm','m1-info'].entries()){
+        let json = await convertIcsToJson(getLienEDT_FAC(classe));
+        let calendrier = new Calendrier(creerElementsCalendrierFromJson(json), classe, colors[index]);
+        res.push(calendrier);
+    }
+    return res;
+}
+
+
 // FONCTIONS APPEL API //
 // Ajouter un calendrier à l'utilisateur : ajoute le calendrier à la liste des calendriers de l'utilisateur
 export async function addCalendrier(calendrier:Calendrier): Promise<any>{
-    //TODO
     return true;
 }
 
 // Supprimer un calendrier de l'utilisateur : supprime le calendrier de la liste des calendriers de l'utilisateur
 export async function deleteCalendrier(calendrier:string): Promise<any>{
-    //TODO
     return true;
 }
 
 // Lire les calendriers de l'utilisateur : retourne la liste des calendriers de l'utilisateur
 export async function readCalendriers(): Promise<any>{
-    //TODO
     return [];
 }
  

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, FlatList, View as ViewRN, ScrollView } from 'react-native';
 import { View } from '../components/Themed';
-import { List, Switch, Text, useTheme } from 'react-native-paper';
+import { Button, List, Switch, Text, useTheme } from 'react-native-paper';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useGetAlarmsByUserId } from '../services/api/graphqlService';
 import { parseAlarmDate, parseAlarmTime } from '../services/DateParserService';
 import { Calendrier, Evenement } from '../models/Evenement';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { lienHTMLenCalendrier } from '../services/ImportsCalendrier';
 
 interface Alarm {
   time: string;
@@ -47,26 +48,40 @@ const InteractiveCalendar = () => {
   const [themeKey, setThemeKey] = useState(0);
   const [markedDates, setMarkedDates] = useState({});
   const [calendriersSelected, setCalendriersSelected] = useState<boolean[]>([]);
+  const [calendriers, setCalendriers] = useState<Calendrier[]>([]);
+  const [chargement, setChargement] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [nomsCalendriers, setNomsCalendriers] = useState<string[]>([]);
 
-  const isSwitchOnCalendar = (calendrier: string) => {
-    return calendriersSelected[Object.keys(calendriers).indexOf(calendrier)];
+  const showDialog = async () => {
+    setChargement(true);
+    setVisible(!visible);
+    if(calendriers.length === 0){
+      setCalendriers(await lienHTMLenCalendrier());
+      const noms = calendriers.map((calendrier) => calendrier.nom);
+      setNomsCalendriers(noms);
+    }
+    setChargement(false);
+  }
+  const isSwitchOnCalendar = (index:any) => {
+    return calendriersSelected[index];
   };
 
-  const onToggleSwitchCalender = (calendrier: string) => () => {
+  const onToggleSwitchCalender = (calendrier: Calendrier, index:any) => () => {
     // si le calendrier vient de s'activer, on ajoute les jours des evenements au markedDates
-    if (!isSwitchOnCalendar(calendrier)) {
-      const events = calendriers[calendrier].evenements;
+    if (!isSwitchOnCalendar(index)) {
+      const events = calendrier.evenements;
       const marked: Record<string, { selected: boolean; marked: boolean, selectedColor:string }> = {...markedDates};
       events.forEach((event) => {
         const date = event.startDate.toISOString().split('T')[0];
-        marked[date] = { selected: true, marked: true, selectedColor: calendriers[calendrier].couleur};
+        marked[date] = { selected: true, marked: true, selectedColor: calendrier.couleur};
       });
       setMarkedDates(marked);
 
     }
     // sinon on retire les jours des evenements du markedDates
     else {
-      const events = calendriers[calendrier].evenements;
+      const events = calendrier.evenements;
       const marked: Record<string, { selected: boolean; marked: boolean }> = {...markedDates};
       events.forEach((event) => {
         const date = event.startDate.toISOString().split('T')[0];
@@ -75,27 +90,11 @@ const InteractiveCalendar = () => {
       setMarkedDates(marked);
     }
     const newCalendriersSelected = [...calendriersSelected];
-    newCalendriersSelected[Object.keys(calendriers).indexOf(calendrier)] = !isSwitchOnCalendar(calendrier);
+    newCalendriersSelected[index] = !isSwitchOnCalendar(index);
     setCalendriersSelected(newCalendriersSelected);
     
 
   };
-
-  /* TODO Récupère les calendriers depuis le serveur
-  const { data: calendriersFetch, refetch } = useGetCalendriers();
-  useEffect(() => {
-    const fetchCalendriers = () => {
-      refetch().then((calendriersData) => {
-        const fetchedCalendriers = calendriersData?.data?.calendriers || [];
-        const newCalendriersSelected = fetchedCalendriers.map(() => false);
-        setCalendriersSelected(newCalendriersSelected);
-      }).catch((error) => {
-        console.error('Error fetching calendriers:', error);
-      });
-    };
-    fetchCalendriers();
-  }, [calendriersFetch]);*/
-
 
   const [userId, setUserId] = useState("");
 
@@ -182,69 +181,22 @@ const InteractiveCalendar = () => {
     );
   };
 
-  // TODO Récupérer les calendriers depuis le serveur
-  const calendriers: {[key: string]: Calendrier} = {
-    "Calendrier 1": new Calendrier(
-      [
-        new Evenement(
-          "Evenement 1",
-          new Date("2024-03-30T00:00:00"),
-          new Date("2024-03-30T23:59:59"),
-          "Lieu 1",
-          "Description 1",
-          "Calendrier 1"
-        ),
-        new Evenement(
-          "Evenement 2",
-          new Date("2024-03-30T00:00:00"),
-          new Date("2024-03-30T23:59:59"),
-          "Lieu 2",
-          "Description 2",
-          "Calendrier 1"
-        )
-      ],
-      "Calendrier 1",
-      "red"
-    ),
-    "Calendrier 2": new Calendrier(
-      [
-        new Evenement(
-          "Evenement 3",
-          new Date("2024-03-29T00:00:00"),
-          new Date("2024-03-29T23:59:59"),
-          "Lieu 3",
-          "Description 3",
-          "Calendrier 2"
-        ),
-        new Evenement(
-          "Evenement 4",
-          new Date("2024-03-30T00:00:00"),
-          new Date("2024-03-30T23:59:59"),
-          "Lieu 4",
-          "Description 4",
-          "Calendrier 2"
-        )
-      ],
-      "Calendrier 2",
-      "blue"
-    )
-  };
 
   const renderCalendriers = () => {
     return(
     <View>
-      <List.Accordion title="Calendriers Importés" left={(props) => <List.Icon {...props} icon="calendar-import" />}>
-       {Object.keys(calendriers).map((calendrier) => {
-        return (
+      <List.Accordion title="Calendriers Importés" 
+      onPress={async () => await showDialog()}
+      left={(props) => <List.Icon {...props} icon="calendar-import" />}
+      right={(props) => <Button icon='chevron-down' loading={chargement} children={undefined} />}>
+      {calendriers.map((calendrier, index) => (
           <List.Item
-            key={calendrier}
-            title={calendrier}
-            left={(props) => <List.Icon {...props} icon="calendar-today" color={calendriers[calendrier].couleur} />}
-            right={(props) => <Switch value={isSwitchOnCalendar(calendrier)} onValueChange={onToggleSwitchCalender(calendrier)} />}
+            key={index}
+            title={calendrier.nom.toUpperCase()}
+            left={(props) => <List.Icon {...props} icon="calendar-today" color={calendrier.couleur} />}
+            right={(props) => <Switch value={isSwitchOnCalendar(index)} onValueChange={onToggleSwitchCalender(calendrier,index)} />}
           />
-        );
-      }
-      )}
+        ))}
       </List.Accordion>
     </View>);
   };
