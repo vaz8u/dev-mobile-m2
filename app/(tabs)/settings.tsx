@@ -5,8 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import React, { useContext, useState } from 'react';
 import {  StyleSheet, Appearance, Linking } from 'react-native';
-import { View } from '../../components/Themed';
-import { ActivityIndicator, Badge, Button,Text, Divider, List, Switch, TextInput } from 'react-native-paper';
+import { ScrollView, View } from '../../components/Themed';
+import { ActivityIndicator, Badge, Button,Text, Divider, List, Switch, TextInput, useTheme } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
 import RNCalendarEvents from 'react-native-calendar-events';
@@ -24,6 +24,7 @@ export default function TabTwoScreen() {
     const [logout, { loading, error }] = useLazyQuery(LOGOUT_USER);
     const [isSwitchOn, setIsSwitchOn] = useState(Appearance.getColorScheme() === 'dark' ? true : false);
     const navigation = useRouter();
+    const theme = useTheme();
 
     if (loading) return (<ActivityIndicator />);
     if (error) setErrorMessage(error.message);
@@ -81,67 +82,74 @@ export default function TabTwoScreen() {
     }
 
     return (
-        <View>
-            <View>
-                <List.Item
-                    title="Nom d'utilisateur"
-                    description="user"
-                    left={() => <List.Icon style={styles.icon} icon="account" />}
-                />
-                <Divider />
-                <List.Accordion
-                    title="Thèmes"
-                    left={() => <List.Icon style={styles.icon} icon="palette" />}
-                >
-                    <ThemeChoice />
-                </List.Accordion>
-                <Divider />
-                <List.Accordion
-                    title="Autorisations"
-                    left={() => <List.Icon style={styles.icon} icon="lock" />}
-                    onPress={checkAutorisations}
-                >
-                    <List.Item title="Localisation" 
-                        left={() => <List.Icon style={styles.icon} icon="crosshairs-gps" />}
-                        right = {() => <List.Icon style={styles.icon} icon={localisationAutorisee ? "check-bold" : "close"}  />}
-                        onPress={() => clickLocalisation()}
+        <ScrollView>
+            <View style={styles.container}>
+                <View>
+                    <List.Item
+                        title="Nom d'utilisateur"
+                        description="user"
+                        left={() => <List.Icon style={styles.icon} icon="account" />}
+                        style={{ backgroundColor: theme.colors.surface}}
                     />
                     <Divider />
-                    <List.Item title="Notifications" 
-                        left={() => <List.Icon style={styles.icon} icon="alarm-light" />}
-                        right = {() => <List.Icon style={styles.icon} icon={notificationsAutorisees ? "check-bold" : "close"}/>}
-                        onPress={async () => await Notifications.requestPermissionsAsync()}
+                    <List.Accordion
+                        title="Thèmes"
+                        left={() => <List.Icon style={styles.icon} icon="palette" />}
+                        style={{ backgroundColor: theme.colors.surface}}
+                    >
+                        <ThemeChoice />
+                    </List.Accordion>
+                    <Divider />
+                    <List.Accordion
+                        title="Autorisations"
+                        left={() => <List.Icon style={styles.icon} icon="lock" />}
+                        onPress={checkAutorisations}
+                        style={{ backgroundColor: theme.colors.surface}}
+                    >
+                        <List.Item title="Localisation" 
+                            left={() => <List.Icon style={styles.icon} icon="crosshairs-gps" />}
+                            right = {() => <List.Icon style={styles.icon} icon={localisationAutorisee ? "check-bold" : "close"}  />}
+                            onPress={() => clickLocalisation()}
+                        />
+                        <Divider />
+                        <List.Item title="Notifications" 
+                            left={() => <List.Icon style={styles.icon} icon="alarm-light" />}
+                            right = {() => <List.Icon style={styles.icon} icon={notificationsAutorisees ? "check-bold" : "close"}/>}
+                            onPress={async () => await Notifications.requestPermissionsAsync()}
+                        />
+                        <Divider />
+                        <List.Item title="Calendriers" 
+                            left={() => <List.Icon style={styles.icon} icon="calendar" />}
+                            right = {() => <List.Icon style={styles.icon} icon={calendrierAutorisees ? "check-bold" : "close"}/>}
+                            onPress={() => Linking.openSettings()}
+                        />
+                    </List.Accordion>
+                    <Divider />
+                    <List.Item                        title="Imports calendriers"
+                        left={() => <List.Icon style={styles.icon} icon="calendar-import" />}
+                        right = {() => <List.Icon style={styles.icon} icon="chevron-right" />}
+                        onPress={() => navigation.push('/pages/imports')}
+                        style={{ backgroundColor: theme.colors.surface}}
                     />
                     <Divider />
-                    <List.Item title="Calendriers" 
-                        left={() => <List.Icon style={styles.icon} icon="calendar" />}
-                        right = {() => <List.Icon style={styles.icon} icon={calendrierAutorisees ? "check-bold" : "close"}/>}
-                        onPress={() => Linking.openSettings()}
-                    />
-                </List.Accordion>
-                <Divider />
-                <List.Item
-                    style={{backgroundColor: 'white'}}
-                    title="Imports calendriers"
-                    left={() => <List.Icon style={styles.icon} icon="calendar-import" />}
-                    right = {() => <List.Icon style={styles.icon} icon="chevron-right" />}
-                    onPress={() => navigation.push('/pages/imports')}
-                />
-                <Divider />
-                <Test />
+                    <Test />
+                </View>
+                
+                <View style={styles.button}>
+                    <Button mode="contained" onPress={handleDisconnect} disabled={false}>
+                        Se deconnecter
+                    </Button> 
+                </View>
+                <Text>{errorMessage}</Text>
             </View>
-            
-            <View style={styles.button}>
-                <Button mode="contained" onPress={handleDisconnect} disabled={false}>
-                    Se deconnecter
-                </Button> 
-            </View>
-            <Text>{errorMessage}</Text>
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
+    container:{
+        flex: 1
+    },
     button: {
         alignItems: 'center',
         justifyContent: 'center',
