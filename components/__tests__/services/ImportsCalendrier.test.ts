@@ -32,11 +32,6 @@ SEQUENCE:2141033201
 END:VEVENT
 END:VCALENDAR`;
 
-jest.mock('react-native-fs', () => ({
-  readFile: jest.fn(() => Promise.resolve(fileContent)),
-}));
-
-
 // Test pour la fonction creerElementsCalendrierFromJson
 test('creerElementsCalendrierFromJson', () => {
     const json = [
