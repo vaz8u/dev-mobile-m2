@@ -27,6 +27,7 @@ type Query {
   account(username: String!): Account!
   alarms: [Alarm!]!
   alarm(id: String!): Alarm!
+  alarmsByUserId(id: String!): [Alarm!]!
   logout: Boolean!
 }
 
@@ -57,6 +58,15 @@ input UpdateAccountInput {
 
 input CreateAlarmInput {
   name: String!
+  transportMethod: String
+  departure: String
+  arrival: String
+  wakeUpTime: String
+  arriveTime: String
+  repetition: Boolean! = false
+  days: [Boolean!]! = []
+  arrivalTime: String
+  departureTime: String
   triggeredDate: String!
   alarmSound: Boolean!
   vibratorSound: Boolean!

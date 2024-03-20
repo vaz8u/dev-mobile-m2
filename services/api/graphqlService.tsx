@@ -1,4 +1,5 @@
 import { useMutation, useQuery, gql } from '@apollo/client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const LOGOUT_USER = gql`
     query Logout {
@@ -10,6 +11,7 @@ const LOGIN_USER = gql`
     mutation Login($loginAccountInput: LoginAccountInput!) {
         login(loginAccountInput: $loginAccountInput) {
             account {
+                _id
                 username
             }
             access_token
@@ -63,15 +65,28 @@ export const GET_ALARMS = gql`
 const GET_ALARM = gql`
   query GetAlarm($alarmId: String!) {
     alarm(id: $alarmId) {
-      _id
-      name
-      triggeredDate
-      alarmSound
-      vibratorSound
-      activated
+        _id
+        name
+        triggeredDate
+        alarmSound
+        vibratorSound
+        activated
     }
   }
 `;
+
+export const GET_ALARMS_BY_USER_ID = gql`
+    query findAlarmsByUserId($userId: String!) {
+        alarmsByUserId(id: $userId) {
+            _id
+            name
+            triggeredDate
+            alarmSound
+            vibratorSound
+            activated
+        }
+    }
+`
 
 const UPDATE_ALARM = gql`
   mutation UpdateAlarm($updateAlarmInput: UpdateAlarmInput!) {
@@ -142,6 +157,14 @@ export const useGetAlarms = () => {
   const { loading, error, data, refetch } = useQuery(GET_ALARMS);
   return { loading, error, data, refetch };
 };
+
+export const useGetAlarmsByUserId = (userId : string) => {
+    const {loading, error, data, refetch } = useQuery(GET_ALARMS_BY_USER_ID, {
+        variables: { userId }
+    });
+
+    return {loading, error, data, refetch };
+}
 
 export const useGetAlarm = (alarmId:string) => {
   const { loading, error, data, refetch } = useQuery(GET_ALARM, {
