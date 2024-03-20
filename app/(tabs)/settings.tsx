@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import React, { useContext, useState } from "react";
 import { StyleSheet, Appearance, Linking } from "react-native";
-import { View } from "../../components/Themed";
+import { ScrollView, View } from "../../components/Themed";
 import {
   ActivityIndicator,
   Button,
