@@ -138,7 +138,7 @@ export default function ConnexionScreen() {
 
 // Affiche ou non le bouton de connexion Google
 const setGoogleButton = () => {
-  if (expo_go) {
+  if (false) {
     // si on est en dev sans expo go
     let GoogleHButton = require("../../components/GoogleHandler");
     return <GoogleHButton.GoogleHButton></GoogleHButton.GoogleHButton>;
