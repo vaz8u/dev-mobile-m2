@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 
 import { View } from "../components/Themed";
 import AlarmList, { AlarmListInterface, Day } from "../components/AlarmList";
-import { Button, Divider } from "react-native-paper";
+import { Button, Divider, Text } from "react-native-paper";
 import { useRouter } from "expo-router";
 import {
   useDeleteAlarm,
@@ -189,13 +189,18 @@ const AlarmListScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.list}>
-        <FlatList
-          data={alarmList}
-          renderItem={itemAlarm}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
+       {alarmList.length == 0 ? (
+          <Text style={styles.alarmeVide}>Liste d'alarme vide, veuillez ajouter une alarme</Text>
+        ) : (
+          <View style={styles.list}>
+        
+            <FlatList
+              data={alarmList}
+              renderItem={itemAlarm}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+        )}
       <View style={styles.buttonContainer}>
         <Button
           mode="elevated"
@@ -234,6 +239,11 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 8,
+  },
+  alarmeVide:{
+    fontSize: 20,
+    textAlign: "center",
+    margin: 20
   },
   buttonContainer: {
     flex: 1,

@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import React, { useContext, useState } from "react";
 import { StyleSheet, Appearance, Linking } from "react-native";
-import { View } from "../../components/Themed";
+import { ScrollView, View } from "../../components/Themed";
 import {
   ActivityIndicator,
   Button,
@@ -146,7 +146,8 @@ export default function TabTwoScreen() {
                         />
                     </List.Accordion>
                     <Divider />
-                    <List.Item                        title="Imports calendriers"
+                    <List.Item                        
+                        title="Imports calendriers"
                         left={() => <List.Icon style={styles.icon} icon="calendar-import" />}
                         right = {() => <List.Icon style={styles.icon} icon="chevron-right" />}
                         onPress={() => navigation.push('/pages/imports')}

@@ -4,7 +4,7 @@ import { Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, Text, Card } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import { Controller, useForm } from "react-hook-form";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from './Themed';
 import { setNotification } from '../services/NotifAlarmeService';
 
 import { DatePicker } from "./DatePicker";
@@ -228,12 +228,12 @@ const AdvancedAlarmForm = () => {
         getValues={getValues}
       />
 
-      <DatePicker
+      {/* <DatePicker
         selectedDate={selectedDate}
         onDateChange={handleDateChange}
-      ></DatePicker>
+      ></DatePicker> */}
 
-      <Card style={styles.cartes}>
+      <Card style={styles.cartes} mode='outlined'>
         <ToggleParameter
           paramTitle="Son de l'alarme"
           isParamActivated={isAlarmSoundActivated}
