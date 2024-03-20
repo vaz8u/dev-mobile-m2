@@ -3,6 +3,9 @@ import { NotifAlarme } from '../models/NotifAlarme';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { List } from 'react-native-paper';
+import { Alarme } from '../models/Alarme';
+import  Constants  from 'expo-constants';
+import { set } from 'react-hook-form';
 
 let vibrationInterval: string | number | NodeJS.Timeout | undefined;
 
@@ -43,14 +46,14 @@ Notifications.addNotificationReceivedListener(() => {
   }
 });
 
-Notifications.addNotificationResponseReceivedListener(response => {
+Notifications.addNotificationResponseReceivedListener(async response => {
   clearInterval(vibrationInterval);
   // Lorsque le bouton 'snooze' est cliqué
   if (response.actionIdentifier === 'snooze') {
-    //TODO
+    await schedulePushNotification(notifAlarmetest);
   }
+  
 });
-
 
 // FONCTIONS //
 // Fonction pour programmer une notification
@@ -71,12 +74,12 @@ export async function schedulePushNotification(notifAlarme: NotifAlarme) {
       categoryIdentifier: 'alarme',
       title: notifAlarme.title,
       body: notifAlarme.body,
-      data: { data: notifAlarme.id },
+      data: notifAlarme.data,
       sound: notifAlarme.sound,
-      vibrate: [0, 20, 250, 4],
+      vibrate: notifAlarme.vibrate ? [0, 20, 250, 4] : [],
     },
     trigger: { 
-      date: new Date(Date.now()+1000 ),
+      date: notifAlarme.date,
       channelId: 'alarm',
     },
   });
@@ -106,7 +109,8 @@ async function registerForPushNotificationsAsync() {
     }
     // Learn more about projectId:
     // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-    token = (await Notifications.getExpoPushTokenAsync({ projectId: 'your-project-id' })).data;
+
+    token = (await Notifications.getExpoPushTokenAsync({ projectId: Constants.expoConfig?.extra?.eas?.projectId })).data;
     console.log(token);
   } else {
     alert('Must use physical device for Push Notifications');
@@ -114,15 +118,37 @@ async function registerForPushNotificationsAsync() {
   return token;
 }
 
+export async function setNotification(alarme:Alarme){
+    let notifAlarme: NotifAlarme = {
+      id: alarme.name,
+      title: alarme.name,
+      body: 'Trajet : ' + alarme.departure + ' -> ' + alarme.arrival + ' : ' + alarme.arriveTime,
+      sound: alarme.alarmSound ? 'SansTitre.waw' : false,
+      date: new Date(alarme.triggeredDate),
+      data: alarme,
+      vibrate: alarme.vibratorSound,
+    };
+    console.log(notifAlarme);
+    try{ 
+      await schedulePushNotification(notifAlarme);
+      return true;
+    }
+    catch(e){
+      return false;
+    }
+}
+
 
 // TESTS //
 // Objet de test
-let notifAlarme: NotifAlarme = {
-  id: 0,
-  title: "Alarme!",
+let notifAlarmetest: NotifAlarme = {
+  id: '0',
+  title: "Alarme snooze!",
   body: 'Appuyer sur la notification pour arrêter la vibration',
   sound: 'SansTitre.waw',
-  date: new Date(Date.now()+1000),
+  date: new Date(Date.now() + 300000),
+  data: null,
+  vibrate : [0, 20, 250, 4],
 };
 
 // Fonction pour tester l'envoi de notification à la demande
@@ -133,7 +159,7 @@ export function Test(){
       title="Tester les notifications"
       left={() => <List.Icon style={{marginLeft: 10}} icon="alarm-light"/>}
       right = {() => <List.Icon style={{marginLeft: 10}} icon="chevron-left" />}
-      onPress={async () => await schedulePushNotification(notifAlarme)}
+      onPress={async () => await schedulePushNotification(notifAlarmetest)}
     />
   );
 

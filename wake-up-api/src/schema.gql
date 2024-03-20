@@ -27,6 +27,7 @@ type Query {
   account(username: String!): Account!
   alarms: [Alarm!]!
   alarm(id: String!): Alarm!
+  alarmsByUserId(id: String!): [Alarm!]!
   logout: Boolean!
 }
 

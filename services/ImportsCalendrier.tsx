@@ -6,7 +6,7 @@ import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 import * as DP from 'expo-document-picker';
 import { ca } from 'react-native-paper-dates';
-import { readFile } from 'react-native-fs';
+// import { readFile } from 'react-native-fs';
 
 export function getLienEDT_FAC(classe:string): string {
     // id = 'base'
@@ -25,7 +25,7 @@ export async function convertIcsToJson(_data:string): Promise<any> {
         const response = await fetch(_data);
         data = await response.text();
     }catch(e){
-        data = await readFile(_data, 'utf8');
+        // data = await readFile(_data, 'utf8');
     }
     
 

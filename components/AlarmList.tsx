@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text } from 'react-native';
 import { Avatar, Checkbox, List, Switch } from 'react-native-paper';
 import { useActivateAlarm, useDeactivateAlarm } from '../services/api/graphqlService';
 
@@ -25,15 +25,25 @@ export enum Day {
 const AlarmList = (props: AlarmListInterface & { isSelected: boolean, onUpdate: (key: keyof AlarmListInterface, newValue: any) => void  }) => {
     const [activateAlarmMutation] = useActivateAlarm();
     const [deactivateAlarmMutation] = useDeactivateAlarm();
+    const [isSwitchEnabled, setIsSwitchEnabled] = useState(props.enable);
+    const [timeoutToggleSwitch, setTimeoutToggleSwitch] = useState<NodeJS.Timeout>();
     
-    const onToggleSwitch = () => { 
+    const onToggleSwitch = () => {
+        setIsSwitchEnabled(!isSwitchEnabled);
+        if (timeoutToggleSwitch) {
+            clearTimeout(timeoutToggleSwitch);
+        }
+        setTimeoutToggleSwitch(setTimeout(activateOrDeactivate, 800))
+    };
+
+    const activateOrDeactivate = () => {
         props.onUpdate('enable', !props.enable);
         if (!props.enable) {
             handleActivate(props._id);
         } else {
             handleDeactivate(props._id);
         }
-    };
+    }
 
 
     const handleActivate = async (id: string) => {
@@ -71,7 +81,7 @@ const AlarmList = (props: AlarmListInterface & { isSelected: boolean, onUpdate: 
                         onPress={() => {props.onUpdate('selected', !props.selected);}}
                     />
                 ) : (
-                    <Switch value={props.enable} onValueChange={onToggleSwitch}/>
+                    <Switch value={isSwitchEnabled} onValueChange={onToggleSwitch}/>
                 )
             )}
       />

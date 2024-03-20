@@ -9,10 +9,12 @@ import { Model, Types } from 'mongoose';
 @Injectable()
 export class AccountsService {
   constructor(@InjectModel(Account.name) private accountModel: Model<Account>) {
-    this.create({
-      username: 'admin',
-      password: 'admin',
-    });
+    if (process.env.NODE_ENV === 'development') {
+      this.create({
+        username: 'admin',
+        password: 'admin',
+      });
+    }
   }
 
   async create(createAccountInput: CreateAccountInput): Promise<Account> {
@@ -40,6 +42,10 @@ export class AccountsService {
         username: username,
       })
       .exec();
+  }
+
+  async findById(id: string): Promise<Account> {
+    return await this.accountModel.findById(id).exec();
   }
 
   async update(updateAccountInput: UpdateAccountInput): Promise<Account> {
