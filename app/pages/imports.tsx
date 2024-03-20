@@ -6,7 +6,7 @@ import liensEDT from '../../assets/liensEDT.json';
 import * as importsCalendriers from '../../services/ImportsCalendrier';
 import {Calendrier} from '../../models/Evenement';
 
-export default function App() {
+export default function ImportsPage() {
     // Liste calendriers détéctés sur le téléphone
     const [liens, setLiens] = useState<string[]>(new Array(0));
     // Le bouton de detection des calendriers du téléphone
@@ -122,41 +122,41 @@ export default function App() {
     
 
     return (
-        <View>
-          <Text style={styles.titre}>Options d'importation d'emploi du temps</Text>
-            
-            <List.Accordion
-              id="Fac"
-              title="Fac"
-            >
-              <Searchbar
-                placeholder="Rechercher une classe ..."
-                onChangeText={setSearchQuery}
-                value={searchQuery}
-                style={styles.searchbar}
-              />
-              <List.Subheader style={styles.text}>UFR MIM</List.Subheader>
-              {liensEDT
-                .map((lien: any) => lien.id)
-                .filter((lien: any) => lien.toUpperCase() !== 'BASE')
-                .filter((lien: any) => lien.toUpperCase().includes(searchQuery.toUpperCase()))
-                .map((lien: any) => (
-                  <List.Item
-                    key={lien.id}
-                    title={lien.toUpperCase()}
-                    right={() => boutonAjouter(lien,'fac')}
-                  />
-              ))}
-            </List.Accordion>
+      <View>
+        <Text style={styles.titre}>Options d'importation d'emploi du temps</Text>
+        
+        <List.Accordion
+          id="Fac"
+          title="Fac"
+        >
+          <Searchbar
+          placeholder="Rechercher une classe ..."
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+          style={styles.searchbar}
+          />
+          <List.Subheader style={styles.text}>UFR MIM</List.Subheader>
+          {liensEDT
+          .map((lien: any, index: number) => ({id: lien.id, index}))
+          .filter((lien: any) => lien.id.toUpperCase() !== 'BASE')
+          .filter((lien: any) => lien.id.toUpperCase().includes(searchQuery.toUpperCase()))
+          .map((lien: any) => (
+            <List.Item
+            key={lien.index}
+            title={lien.id.toUpperCase()}
+            right={() => boutonAjouter(lien.id,'fac')}
+            />
+          ))}
+        </List.Accordion>
 
-            <List.Accordion
-              id="Calendriers du téléphone"
-              title="Calendriers du téléphone"
-            >
-                {AuthcalendriersTelephone ? (
-                  <Button
-                    mode="contained-tonal"
-                    style={styles.button_center}
+        <List.Accordion
+          id="Calendriers du téléphone"
+          title="Calendriers du téléphone"
+        >
+          {AuthcalendriersTelephone ? (
+            <Button
+            mode="contained-tonal"
+            style={styles.button_center}
                     onPress={async () => {
                       setLiens([]);
                       setLoading(loading => !loading);
@@ -238,11 +238,11 @@ export default function App() {
                 else
                   setBoutons_coche_2(boutons_coche_2.map((value, index) => index === liens.findIndex((lien: any) => lien === deleteitem) ? true : value));
               }}>Oui</Button>
-              <Button onPress={hideDialog}>Non</Button>
-            </Dialog.Actions>
-            </Dialog>
-          
-        </View>
+          <Button onPress={hideDialog}>Non</Button>
+        </Dialog.Actions>
+        </Dialog>
+        
+      </View>
       );
     }
 
