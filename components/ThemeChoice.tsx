@@ -1,12 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, FlatList } from 'react-native';
 import { View } from '../components/Themed';
 
 import { DefaultTheme, useTheme, RadioButton, Text, Switch, Icon } from 'react-native-paper';
-import { useThemeContext } from './ThemeContext';
+import { fetchTheme, useThemeContext } from './ThemeContext';
 import { Theme, listeTheme } from '../styles/themeStyle';
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ThemeChoice = () => {
     const theme = useTheme();
@@ -16,36 +15,49 @@ const ThemeChoice = () => {
 
     const [themeList, setThemeList] = useState<Theme[]>(listeTheme);
 
-    const setTheme = (themeName: string) => {
-        const lightTheme = {
-            ...DefaultTheme,
-            colors: {
-                ...DefaultTheme.colors,
-                ...themeList.find((theme: { name: string; }) => theme.name === themeName)?.light
-            },
-            dark: theme.dark
-        };
-        const darkTheme = {
-            ...DefaultTheme,
-            colors: {
-                ...DefaultTheme.colors,
-                ...themeList.find((theme: { name: string; }) => theme.name === themeName)?.dark
-            },
-            dark: theme.dark
-        };
-        
-        const newTheme = theme.dark? darkTheme: lightTheme;
-
+    const setTheme = async (themeName: string, isDarkMode: boolean) => {
+      const lightTheme = {
+          ...DefaultTheme,
+          colors: {
+              ...DefaultTheme.colors,
+              ...themeList.find((theme: { name: string; }) => theme.name === themeName)?.light
+          },
+          dark: isDarkMode
+      };
+      const darkTheme = {
+          ...DefaultTheme,
+          colors: {
+              ...DefaultTheme.colors,
+              ...themeList.find((theme: { name: string; }) => theme.name === themeName)?.dark
+          },
+          dark: isDarkMode
+      };
+      
+      const newTheme = isDarkMode? darkTheme: lightTheme;
+      try {
         updateTheme(newTheme);
+        await AsyncStorage.setItem('selectedTheme', themeName);
+        await AsyncStorage.setItem('isDarkMode', JSON.stringify(isDarkMode));
+      } catch (error) {
+          console.error('Erreur lors de la sauvegarde du thème:', error);
+      }
+
     };
 
-
+    useEffect(() => {
+      fetchTheme().then(({ selectedTheme, isDarkMode }) => {
+        if(selectedTheme !== null && isDarkMode !== null){
+          setChecked(selectedTheme);
+          setIsDarkMode(isDarkMode);
+        }
+      });
+    }, []);
 
     const itemThemeChoice = ({ item, index }: { item: Theme, index: number }) => (
         <View style={styles.themeChoice}
               onTouchEnd={() => {
                 setChecked(item.name);
-                setTheme(item.name);
+                setTheme(item.name, isDarkMode);
               }}>
             <RadioButton 
                 value={item.name}
@@ -65,7 +77,6 @@ const ThemeChoice = () => {
             </View>
         </View>
       );
-
     
 
     return (
@@ -75,7 +86,7 @@ const ThemeChoice = () => {
                 <Icon source="white-balance-sunny" color={theme.dark? 'gray':'darkorange'} size={30}></Icon>
                 <Switch
                     value={isDarkMode}
-                    onValueChange={() => {setIsDarkMode(!isDarkMode); theme.dark = !isDarkMode; setTheme(checked)}}
+                    onValueChange={(newIdm) => {setIsDarkMode(newIdm); setTheme(checked, newIdm)}}
                 />
                 <Icon source="moon-waxing-crescent" color={theme.dark? 'yellow':'gray'} size={30}></Icon>
             </View>
