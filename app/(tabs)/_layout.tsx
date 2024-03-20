@@ -90,6 +90,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Icon color={color} source="cog" size={28}/>,
         }}
       />
+      <Tabs.Screen
+        name="alarmSetup"
+        options={{
+          title: 'alarmSetup',
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+      />
     </Tabs>
     
   );

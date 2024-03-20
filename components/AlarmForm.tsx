@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { TextInput, StyleSheet } from 'react-native';
 import { View } from '../components/Themed';
 
@@ -45,14 +46,14 @@ const AlarmForm = () => {
     console.log('JSON File:', jsonFile);
     setJsonFile(null);
   };
-  
-
 
   return (
     <View>
       <Text>Set Up Alarms</Text>
 
+
       <Button icon="calendar-import" style={styles.bouton} onPress={()=> navigation.push('/pages/imports')} >Importer des emplois du temps</Button>
+
 
       <Controller
         control={control}
@@ -68,15 +69,18 @@ const AlarmForm = () => {
         rules={{ required: 'Entrez une durée en minutes' }}
       />
 
+
       <Button onPress={handleSubmit(onSubmit)} >
         Créer les alarmes
       </Button>
       <Button onPress={getCoordinates} >
         Récupérez mes coordonnées
       </Button>
+
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   bouton :{
@@ -86,4 +90,5 @@ const styles = StyleSheet.create({
 });
 
 export default AlarmForm;
+
 
