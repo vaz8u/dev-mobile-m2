@@ -1,5 +1,4 @@
 import {API_KEY_TRAJET} from '@env';
-import { de } from 'react-native-paper-dates';
 
 /* Fonction qui permet de convertir une adresse en coordonnées GPS
   * @param nrue : Numéro de rue
@@ -25,6 +24,7 @@ export async function adresseToCoords(adresse: any) {
   
     } catch (error) {
       console.error('La fonction adresseToCoords a échoué : ', error);
+      return -1;
     }
   }
   
@@ -41,9 +41,17 @@ export async function trajet(depart: any, arrivee: any, deplacement:string) {
       const departCoords = await getCoordinates(depart);
       // Récupére les coordonnées du lieu d'arrivée
       const arriveeCoords = await getCoordinates(arrivee);
+      
+      if(departCoords === '-1' || arriveeCoords === '-1')
+        return -1;
+
+      console.log(departCoords);
+      console.log(arriveeCoords);
   
       // Calcule le trajet
       const result = await apiTrajet(departCoords, arriveeCoords,deplacement);
+      if(result===-1)
+        return -1;
   
       // Récupére la distance et le temps du trajet
       let distance = result.features[0].properties.distance;
@@ -55,7 +63,7 @@ export async function trajet(depart: any, arrivee: any, deplacement:string) {
     } catch (error) {
       // Erreur lors du calcul du trajet
       console.error('Erreur lors du calcul du trajet :', error);
-      throw error;
+      return -1;
     }
   }
   
@@ -77,7 +85,7 @@ export async function trajet(depart: any, arrivee: any, deplacement:string) {
       return `${lat},${lon}`;
     } catch (error) {
       console.error('Erreur lors de la récupération des coordonnées :', error);
-      throw error;
+      return '-1';
     }
   }  
 
@@ -109,7 +117,7 @@ export async function apiTrajet(depart: any, arrivee: any, deplacement: string) 
     return result;
   } catch (error) {
     console.error('Erreur lors de la requête apiTrajet :', error);
-    throw error;
+    return -1;
   }
 }
 
