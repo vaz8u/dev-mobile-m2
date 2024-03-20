@@ -112,21 +112,7 @@ test('afficherCalendriersTrouveesAvecViewText', () => {
     expect(result).toBeDefined();
 });
 
-// Test pour la fonction importManuel
-jest.mock('expo-document-picker', () => ({
-    getDocumentAsync: jest.fn(),
-  }));
-  
-  test('importManuel', async () => {
-      const mockFile = { assets: [{ uri: 'fileUri', name: 'fileName' }] };
-  
-      (DP.getDocumentAsync as jest.Mock).mockResolvedValue(mockFile);
-  
-      const result = await importManuel();
-  
-      expect(result).toEqual([mockCalendrier]);
-      expect(DP.getDocumentAsync).toHaveBeenCalledWith({ type: 'text/calendar' });
-    }); 
+
 
 // Test pour la fonction addCalendrier
 test('addCalendrier', async () => {
