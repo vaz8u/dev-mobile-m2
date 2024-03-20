@@ -2,7 +2,7 @@ import { Platform, Vibration } from 'react-native';
 import { NotifAlarme } from '../models/NotifAlarme';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
-import { List } from 'react-native-paper';
+import { List, useTheme } from 'react-native-paper';
 import { Alarme } from '../models/Alarme';
 import  Constants  from 'expo-constants';
 import { set } from 'react-hook-form';
@@ -163,9 +163,11 @@ let notifAlarmetest: NotifAlarme = {
 
 // Fonction pour tester l'envoi de notification à la demande
 export function Test(){
+  const theme = useTheme();
+
   return (
     <List.Item
-      style={{backgroundColor: 'white'}}
+      style={{ backgroundColor: theme.colors.surface}}
       title="Tester les notifications"
       left={() => <List.Icon style={{marginLeft: 10}} icon="alarm-light"/>}
       right = {() => <List.Icon style={{marginLeft: 10}} icon="chevron-left" />}

@@ -46,7 +46,7 @@ export default function RootLayout() {
 
 
 function RootLayoutNav() {
-    const [isLogged, setIsLogged] = useState(false);
+    const [isLogged, setIsLogged] = useState(true);
 
   return (
     <ApolloProvider client={client}>
