@@ -50,7 +50,7 @@ Notifications.addNotificationResponseReceivedListener(async response => {
   clearInterval(vibrationInterval);
   // Lorsque le bouton 'snooze' est cliqué
   if (response.actionIdentifier === 'snooze') {
-    await schedulePushNotification(notifAlarmetest);
+    await schedulePushNotification(notifAlarmeSnooze);
   }
   
 });
@@ -141,12 +141,22 @@ export async function setNotification(alarme:Alarme){
 
 // TESTS //
 // Objet de test
-let notifAlarmetest: NotifAlarme = {
+let notifAlarmeSnooze: NotifAlarme = {
   id: '0',
   title: "Alarme snooze!",
   body: 'Appuyer sur la notification pour arrêter la vibration',
   sound: 'SansTitre.waw',
   date: new Date(Date.now() + 300000),
+  data: null,
+  vibrate : [0, 20, 250, 4],
+};
+
+let notifAlarmetest: NotifAlarme = {
+  id: new Date().getTime().toString(),
+  title: "Alarme de test!",
+  body: 'Appuyer sur la notification pour arrêter la vibration',
+  sound: 'SansTitre.waw',
+  date: new Date(Date.now() + 5000),
   data: null,
   vibrate : [0, 20, 250, 4],
 };
