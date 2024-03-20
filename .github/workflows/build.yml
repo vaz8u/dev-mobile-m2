@@ -1,10 +1,9 @@
 name: Build
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened]
+    branches: ["main", "develop"]
+  pull_request: 
+    branches: [ "develop" ]
 jobs:
   sonarcloud:
     name: SonarCloud
@@ -13,6 +12,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up node
+        run: npm install
+      - name: Test coverage
+        run: npm test -- --coverage --testResultsProcessor=jest-sonar-reporter --watchAll=false
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:

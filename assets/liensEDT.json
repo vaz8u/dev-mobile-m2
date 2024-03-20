@@ -1,0 +1,22 @@
+[
+    {
+        "id": "base",
+        "code": "https://planning.univ-lorraine.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=DATA&projectId=11&calType=ical&nbWeeks=20"
+    },
+    {
+        "id": "ihm",
+        "code": "158863"
+    },
+    {
+        "id": "gi",
+        "code": "158925"
+    },
+    {
+        "id": "ssi",
+        "code": "159583"
+    },
+    {
+        "id": "m1-info",
+        "code": "79683"
+    }
+]

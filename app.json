@@ -12,17 +12,24 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "extra": {
+      "eas": {
+        "projectId": "3d458342-36b9-4df8-a103-1cd60625b9f9"
+      }
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.wakeUp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.wakeUp"
     },
     "web": {
       "bundler": "metro",
@@ -30,7 +37,19 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.989732552774-i88hshcigsakof1147e2h5tjb8rnr2pv"
+        }
+      ],"expo-document-picker",
+      [
+        "expo-notifications",
+        {
+          "sounds": ["/assets/sounds/SansTitre.wav"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

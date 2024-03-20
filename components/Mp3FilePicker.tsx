@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
+
+import { View } from '../components/Themed';
+import { Text, Button } from 'react-native-paper';
+
 import * as DocumentPicker from 'expo-document-picker';
 
 

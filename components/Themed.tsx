@@ -3,9 +3,11 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import { Text as DefaultText, useColorScheme, View as DefaultView } from "react-native";
+import { Text as DefaultText, useColorScheme, View as DefaultView, ScrollView as DefaultScrollView } from "react-native";
+import { useTheme } from "react-native-paper";
 
 import Colors from "../constants/Colors";
+import React from "react";
 
 type ThemeProps = {
   lightColor?: string;
@@ -14,6 +16,7 @@ type ThemeProps = {
 
 export type TextProps = ThemeProps & DefaultText["props"];
 export type ViewProps = ThemeProps & DefaultView["props"];
+export type ScrollViewProps = ThemeProps & DefaultView["props"];
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -36,9 +39,25 @@ export function Text(props: TextProps) {
   return <DefaultText style={[{ color }, style]} {...otherProps} />;
 }
 
+// export function View(props: ViewProps) {
+//   const { style, lightColor, darkColor, ...otherProps } = props;
+//   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, "background");
+
+//   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+// }
+
 export function View(props: ViewProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, "background");
+  const theme = useTheme(); 
+  const backgroundColor = lightColor && darkColor ? (theme.dark ? darkColor : lightColor) : theme.colors.surfaceVariant; 
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function ScrollView(props: ScrollViewProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+  const theme = useTheme(); 
+  const backgroundColor = lightColor && darkColor ? (theme.dark ? darkColor : lightColor) : theme.colors.surfaceVariant; 
+
+  return <DefaultScrollView style={[{ backgroundColor }, style]} {...otherProps} />;
 }
