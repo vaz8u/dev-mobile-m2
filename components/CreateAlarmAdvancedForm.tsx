@@ -1,37 +1,41 @@
+
+
 import { Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, Text, Card } from 'react-native-paper';
 import ToggleParameter from './ToggleParameter';
 import { Controller, useForm } from "react-hook-form";
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { CreateAlarmInput } from '../wake-up-api/src/alarms/dto/create-alarm.input';
-import { ScrollView } from 'react-native-gesture-handler';
-
-import { DatePicker } from './DatePicker';
-
-// Models
-import {Alarme} from '../models/Alarme';
-
-// Services
-import { useCreateAlarm, useGetAlarms } from '../services/api/graphqlService';
-
-// Composants
-import MethodeTransport from './createAlarmAdvancedComponents/methodeTransport';
-import Adresses from './createAlarmAdvancedComponents/adresses';
-import TempsSupplementaire from './createAlarmAdvancedComponents/tempsSupplementaire';
-import RedondanceSemaine from './createAlarmAdvancedComponents/redondanceSemaine';
-import HeureArrivee from './createAlarmAdvancedComponents/heureArrivee';
-import HeureDepart from './createAlarmAdvancedComponents/heureDepart';
+import { ScrollView } from "react-native-gesture-handler";
 import { setNotification } from '../services/NotifAlarmeService';
 
-const AdvancedAlarmForm = () => {
+import { DatePicker } from "./DatePicker";
 
+// Models
+import { Alarme } from "../models/Alarme";
+
+// Composants
+import MethodeTransport from "./createAlarmAdvancedComponents/methodeTransport";
+import Adresses from "./createAlarmAdvancedComponents/adresses";
+import TempsSupplementaire from "./createAlarmAdvancedComponents/tempsSupplementaire";
+import RedondanceSemaine from "./createAlarmAdvancedComponents/redondanceSemaine";
+import HeureArrivee from "./createAlarmAdvancedComponents/heureArrivee";
+import HeureDepart from "./createAlarmAdvancedComponents/heureDepart";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import GeolocationService from "../services/GeolocationService";
+import { CreateAlarmInput } from "../wake-up-api/src/alarms/dto/create-alarm.input";
+import {
+  useCreateAlarm,
+  useGetAlarmsByUserId,
+} from "../services/api/graphqlService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const AdvancedAlarmForm = () => {
   // Methode de transport
-  const [transport, setTransport] = useState('drive');
+  const [transport, setTransport] = useState("drive");
 
   // Temps supplémentaire
-  const [tempsLever, setTempsLever] = useState('');
-  const [tempsArriver, setTempsArriver] = useState('');
+  const [tempsLever, setTempsLever] = useState("");
+  const [tempsArriver, setTempsArriver] = useState("");
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const handleDateChange = (date: Date) => {
@@ -41,7 +45,7 @@ const AdvancedAlarmForm = () => {
   // Redondance semaine
   const [isClickedAvatar, setIsClickedAvatar] = useState(Array(7).fill(false));
   const [isRandondence, setIsRandondence] = useState(false);
-   // active ou desactive tout les avatars
+  // active ou desactive tout les avatars
   const rendondanceSwitch = () => {
     setIsRandondence(!isRandondence);
     for (const element of isClickedAvatar) {
@@ -50,8 +54,8 @@ const AdvancedAlarmForm = () => {
       });
       setIsClickedAvatar(newIsClickedAvatar);
     }
-  }
-   // active ou desactive un avatar
+  };
+  // active ou desactive un avatar
   const handleAvatarClick = (jour: number) => () => {
     const newIsClickedAvatar = isClickedAvatar.map((value, index) => {
       if (index === jour) {
@@ -66,21 +70,31 @@ const AdvancedAlarmForm = () => {
   const [isAlarmSoundActivated, setIsAlarmSoundActivated] = useState(false);
   const [isVibratorActivated, setIsVibratorActivated] = useState(false);
   const [createAlarm] = useCreateAlarm();
-  const { refetch } = useGetAlarms();
+  const [userId, setUserId] = useState("");
+
+  const { refetch } = useGetAlarmsByUserId(userId);
+
+  const { getLocationWithAdresse } = GeolocationService();
 
   const handleCancelButtonPress = () => {
     navigation.push("/");
   };
 
   const handleToggleParameter = (paramTitle: string) => {
-    if (paramTitle === 'Son de l\'alarme') {
+    if (paramTitle === "Son de l'alarme") {
       setIsAlarmSoundActivated(!isAlarmSoundActivated);
-    } else if (paramTitle === 'Vibreur') {
+    } else if (paramTitle === "Vibreur") {
       setIsVibratorActivated(!isVibratorActivated);
     }
   };
 
-  const { control, handleSubmit, getValues, formState: { errors }} = useForm({
+  const {
+    control,
+
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       Name: "",
       Departure: "",
@@ -124,8 +138,8 @@ const AdvancedAlarmForm = () => {
     alarme.setActivated(true);
 
     console.log(alarme);
-console.log(alarme.valide());
-    if(alarme.valide()){
+    console.log(alarme.valide());
+    if (alarme.valide()) {
       const input: CreateAlarmInput = {
         name: alarme.name,
         transportMethod: alarme.transportMethod,
@@ -140,7 +154,7 @@ console.log(alarme.valide());
         triggeredDate: alarme.triggeredDate,
         alarmSound: alarme.alarmSound,
         vibratorSound: alarme.vibratorSound,
-        activated: alarme.activated
+        activated: alarme.activated,
       };
       try{
         await createAlarm({ variables: { alarmInput: input } });
@@ -159,52 +173,65 @@ console.log(alarme.valide());
     }
   };
 
+  useEffect(() => {
+    AsyncStorage.getItem("userId").then((value) => {
+      setUserId(value ?? "");
+    });
+  }, []);
+
   return (
     <ScrollView style={[styles.scene]}>
-      <Controller control={control} rules={{required: true}}
+      <Controller
+        control={control}
+        rules={{ required: true }}
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput label="Nom de l'alarme" value={value} mode="outlined"
-            placeholder="Alarme .." right={<TextInput.Icon icon="close" />}
+          <TextInput
+            label="Nom de l'alarme"
+            value={value}
+            mode="outlined"
+            placeholder="Alarme .."
+            right={<TextInput.Icon icon="close" />}
             onBlur={onBlur}
-            onChangeText={onChange}/>
-          )}
-        name="Name"/>
-      {errors.Name && <Text style={[styles.text]}>L'alarme n'a pas de nom</Text>}
+            onChangeText={onChange}
+          />
+        )}
+        name="Name"
+      />
+      {errors.Name && (
+        <Text style={[styles.text]}>L'alarme n'a pas de nom</Text>
+      )}
 
       <MethodeTransport transport={transport} setTransport={setTransport} />
 
-      <Adresses 
-        control={control}
-        errors={errors}
+      <Adresses control={control} errors={errors} />
+
+      <TempsSupplementaire
+        tempsLever={tempsLever}
+        setTempsLever={setTempsLever}
+        tempsArriver={tempsArriver}
+        setTempsArriver={setTempsArriver}
       />
 
-      <TempsSupplementaire 
-        tempsLever={tempsLever} 
-        setTempsLever={setTempsLever} 
-        tempsArriver={tempsArriver} 
-        setTempsArriver={setTempsArriver} 
-      />
-
-      <RedondanceSemaine 
-        isRandondence={isRandondence} 
-        rendondanceSwitch={rendondanceSwitch} 
-        isClickedAvatar={isClickedAvatar} 
+      <RedondanceSemaine
+        isRandondence={isRandondence}
+        rendondanceSwitch={rendondanceSwitch}
+        isClickedAvatar={isClickedAvatar}
         handleAvatarClick={handleAvatarClick}
       />
 
-      <HeureArrivee
-        control={control}
-        errors={errors}
-      />
+      <HeureArrivee control={control} errors={errors} />
 
-      <HeureDepart 
+      <HeureDepart
         transport={transport}
         control={control}
         errors={errors}
         getValues={getValues}
       />
 
-      <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange}></DatePicker>
+      <DatePicker
+        selectedDate={selectedDate}
+        onDateChange={handleDateChange}
+      ></DatePicker>
 
       <Card style={styles.cartes}>
         <ToggleParameter
@@ -218,58 +245,62 @@ console.log(alarme.valide());
           onToggle={handleToggleParameter}
         />
       </Card>
-         
-      <Card style={{marginBottom:40,marginTop:5}}>
-      <Card.Actions>
-        <Button mode="contained" onPress={handleCancelButtonPress} disabled={false}>
-          Annuler
-        </Button>
-        <Button mode="contained" onPress={handleSubmit(onSubmit)}>
-          Créer
-        </Button>
-      </Card.Actions>
-    </Card>
+
+      <Card style={{ marginBottom: 40, marginTop: 5 }}>
+        <Card.Actions>
+          <Button
+            mode="contained"
+            onPress={handleCancelButtonPress}
+            disabled={false}
+          >
+            Annuler
+          </Button>
+          <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+            Créer
+          </Button>
+        </Card.Actions>
+      </Card>
     </ScrollView>
   );
 };
 
 export default AdvancedAlarmForm;
 const styles = StyleSheet.create({
-    scene: {
-        flex: 1,
-        padding:10,
-      },
-    row: {
-        display:'flex',
-        flexDirection:'row',
-        justifyContent:'space-evenly'
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    textField: {
-        flex: 1, // Allow TextInput to take up remaining space
-        marginRight: 8, // Add some space between TextInput and Button
-        marginTop: 8,
-      },
-    text:{
-      color:"red"
-    },
-    tempsContainer: {
-      flexDirection: 'row', // Aligner les éléments horizontalement
-      justifyContent: 'space-between', // Répartir l'espace entre les éléments
-      backgroundColor: 'transparent',
-    },
-    input: {
-      flex: 1, // Partager l'espace de manière égale
-      marginRight: 8, // Espacement entre les éléments
-    },
-    cartes:{
-      marginTop:5,
-    },
-    carteTitre:{
-      fontSize:18,
-      fontWeight:'bold'
-    }
+  scene: {
+    flex: 1,
+    padding: 10,
+  },
+  row: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textField: {
+    flex: 1, // Allow TextInput to take up remaining space
+    marginRight: 8, // Add some space between TextInput and Button
+    marginTop: 8,
+  },
+  text: {
+    color: "red",
+  },
+  tempsContainer: {
+    flexDirection: "row", // Aligner les éléments horizontalement
+    justifyContent: "space-between", // Répartir l'espace entre les éléments
+    backgroundColor: "transparent",
+  },
+  input: {
+    flex: 1, // Partager l'espace de manière égale
+    marginRight: 8, // Espacement entre les éléments
+  },
+  cartes: {
+    marginTop: 5,
+  },
+  carteTitre: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });

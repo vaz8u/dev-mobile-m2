@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { UpdateAlarmInput } from './dto/update-alarm.input';
+import { Account } from 'src/accounts/entities/account.entity';
 
 @Injectable()
 export class AlarmsService {
@@ -30,8 +31,18 @@ export class AlarmsService {
     return await this.alarmModel.find().exec();
   }
 
+  async findByUserId(userId: string): Promise<Alarm[]> {
+    const user = await this.accountsService.findById(userId);
+    const alarms: Alarm[] = [];
+    for (const alarmId of user.alarms) {
+      alarms.push(await this.findOne(alarmId.toString()));
+    }
+    return alarms;
+  }
+
   async findOne(alarmId: string): Promise<Alarm> {
-    return await this.alarmModel.findById(alarmId).exec();
+    const res = await this.alarmModel.findById(alarmId).exec();
+    return res;
   }
 
   async update(
