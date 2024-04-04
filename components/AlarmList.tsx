@@ -62,11 +62,25 @@ const AlarmList = (props: AlarmListInterface & { isSelected: boolean, onUpdate: 
         }
       };
 
+    function affichageDateEtHeure(date: any){
+        date = new Date(date);
+        let jour = date.getDate();
+        let mois = date.getMonth() + 1;
+        let annee = date.getFullYear();
+        let heure = date.getHours();
+        if(heure < 10)
+            heure = '0' + heure;
+        let minutes = date.getMinutes();
+        if(minutes < 10)
+            minutes = '0' + minutes;
+        return jour + '/' + mois + '/' + annee + ' ' + heure + ':' + minutes;
+    }
+
     return (
       <List.Item 
             style={styles.item}
             title={props.title}
-            description={props.description}
+            description={affichageDateEtHeure(props.description)}
             left={() => ( 
                 <Avatar.Text
                     style={[styles.day]}

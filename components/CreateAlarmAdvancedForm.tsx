@@ -126,8 +126,6 @@ const AdvancedAlarmForm = () => {
     alarme.setTriggeredDate(selectedDate.toISOString());
     // changer les heures et minutes de TriggeredDate pour correspondre à heureDepart
     let date = new Date(alarme.triggeredDate);
-    console.log(alarme.departureTime.split(":")[0]);
-    console.log(alarme.departureTime.split(":")[1]);
     date.setHours(parseInt(alarme.departureTime.split(":")[0]));
     date.setMinutes(parseInt(alarme.departureTime.split(":")[1]));
     date.setSeconds(0);
@@ -137,8 +135,6 @@ const AdvancedAlarmForm = () => {
     alarme.setVibratorSound(isVibratorActivated);
     alarme.setActivated(true);
 
-    console.log(alarme);
-    console.log(alarme.valide());
     if (alarme.valide()) {
       const input: CreateAlarmInput = {
         name: alarme.name,
@@ -157,9 +153,9 @@ const AdvancedAlarmForm = () => {
         activated: alarme.activated,
       };
       try{
-        await createAlarm({ variables: { alarmInput: input } });
-        refetch();
         if(await setNotification(alarme)){
+          await createAlarm({ variables: { alarmInput: input } });
+          refetch();
           Alert.alert("Succès", "Alarme créée avec succès");
           navigation.push("/");
         }

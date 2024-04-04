@@ -91,6 +91,8 @@ const ThemeChoice = () => {
             </View>
           
             <FlatList
+                removeClippedSubviews={false}
+                scrollEnabled={false}
                 data={themeList}
                 renderItem={itemThemeChoice} 
                 keyExtractor={(item, index) => index.toString()}

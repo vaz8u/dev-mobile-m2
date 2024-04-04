@@ -113,7 +113,7 @@ async function registerForPushNotificationsAsync() {
     token = (await Notifications.getExpoPushTokenAsync({ projectId: Constants.expoConfig?.extra?.eas?.projectId })).data;
     console.log(token);
   } else {
-    alert('Must use physical device for Push Notifications');
+   // alert('Must use physical device for Push Notifications');
   }
   return token;
 }
@@ -122,20 +122,26 @@ export async function setNotification(alarme:Alarme){
     let notifAlarme: NotifAlarme = {
       id: alarme.name,
       title: alarme.name,
-      body: 'Trajet : ' + alarme.departure + ' -> ' + alarme.arrival + ' : ' + alarme.arriveTime,
+      body: 'Trajet : ' + alarme.departure + ' -> ' + alarme.arrival,
       sound: alarme.alarmSound ? 'SansTitre.waw' : false,
       date: new Date(alarme.triggeredDate),
       data: alarme,
       vibrate: alarme.vibratorSound,
     };
-    console.log(notifAlarme);
     try{ 
       await schedulePushNotification(notifAlarme);
       return true;
     }
     catch(e){
-      return false;
+      try{
+        // le lendemain
+        notifAlarme.date.setDate(notifAlarme.date.getDate() + 1);
+        await schedulePushNotification(notifAlarme);
+        return true;
+      }catch(e){
+        return false;
     }
+  }
 }
 
 
@@ -156,7 +162,7 @@ let notifAlarmetest: NotifAlarme = {
   title: "Alarme de test!",
   body: 'Appuyer sur la notification pour arrêter la vibration',
   sound: 'SansTitre.waw',
-  date: new Date(Date.now() + 5000),
+  date: new Date(Date.now() + 8000),
   data: null,
   vibrate : [0, 20, 250, 4],
 };

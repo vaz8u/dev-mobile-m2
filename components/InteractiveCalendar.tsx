@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, View as ViewRN, ScrollView } from 'react-native';
 import { View } from '../components/Themed';
 import { Button, List, Switch, Text, useTheme } from 'react-native-paper';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { useGetAlarmsByUserId } from '../services/api/graphqlService';
+import { useGetAlarm, useGetAlarms, useGetAlarmsByUserId } from '../services/api/graphqlService';
 import { parseAlarmDate, parseAlarmTime } from '../services/DateParserService';
 import { Calendrier, Evenement } from '../models/Evenement';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -98,7 +98,7 @@ const InteractiveCalendar = () => {
 
   const [userId, setUserId] = useState("");
 
-  const { data, refetch } = useGetAlarmsByUserId(userId);
+  const { data, refetch } = useGetAlarms();
   useEffect(() => {
     AsyncStorage.getItem("userId").then((value: any) => {
       setUserId(value ?? "");
@@ -120,6 +120,7 @@ const InteractiveCalendar = () => {
           return acc;
       }, {} as Alarms);
       setAlarms(updatedList);
+      console.log(updatedList);
       setMarkedDates(Object.keys(alarms).reduce((marked, date) => {
         marked[date] = { selected: true, marked: true };
         return marked;
@@ -166,6 +167,7 @@ const InteractiveCalendar = () => {
       <View>
         <Text style={styles.alarmText}>Alarmes du {renderDate(selectedDate)}</Text>
         <FlatList
+        scrollEnabled={false}
           data={sortedAlarms}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
